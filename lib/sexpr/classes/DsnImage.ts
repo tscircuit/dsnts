@@ -1,5 +1,7 @@
 import { SxClass } from "../base-classes/SxClass"
 import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
+import { DsnOutline } from "./DsnOutline"
+import { DsnPin } from "./DsnPin"
 
 /**
  * DsnImage represents an (image ...) definition in the library section.
@@ -17,9 +19,8 @@ import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
  */
 export interface DsnImageConstructorParams {
   imageId?: string
-  outline?: SxClass[]
-  pins?: SxClass[]
-  keepouts?: SxClass[]
+  outlines?: DsnOutline[]
+  pins?: DsnPin[]
   otherChildren?: SxClass[]
 }
 
@@ -29,17 +30,15 @@ export class DsnImage extends SxClass {
   token = "image"
 
   private _imageId?: string
-  private _outline: SxClass[] = []
-  private _pins: SxClass[] = []
-  private _keepouts: SxClass[] = []
+  private _outlines: DsnOutline[] = []
+  private _pins: DsnPin[] = []
   private _otherChildren: SxClass[] = []
 
   constructor(params: DsnImageConstructorParams = {}) {
     super()
     if (params.imageId !== undefined) this.imageId = params.imageId
-    if (params.outline !== undefined) this.outline = params.outline
+    if (params.outlines !== undefined) this.outlines = params.outlines
     if (params.pins !== undefined) this.pins = params.pins
-    if (params.keepouts !== undefined) this.keepouts = params.keepouts
     if (params.otherChildren !== undefined)
       this.otherChildren = params.otherChildren
   }
@@ -67,13 +66,24 @@ export class DsnImage extends SxClass {
       })
 
       if (parsed instanceof SxClass) {
-        // TODO: Route to specific typed arrays when outline, pin, keepout classes exist
-        // For now, store in otherChildren
-        image._otherChildren.push(parsed)
+        image.consumeChild(parsed)
       }
     }
 
     return image
+  }
+
+  private consumeChild(child: SxClass) {
+    if (child instanceof DsnOutline) {
+      this._outlines.push(child)
+      return
+    }
+    if (child instanceof DsnPin) {
+      this._pins.push(child)
+      return
+    }
+
+    this._otherChildren.push(child)
   }
 
   get imageId(): string | undefined {
@@ -84,28 +94,20 @@ export class DsnImage extends SxClass {
     this._imageId = value
   }
 
-  get outline(): SxClass[] {
-    return [...this._outline]
+  get outlines(): DsnOutline[] {
+    return [...this._outlines]
   }
 
-  set outline(value: SxClass[]) {
-    this._outline = [...value]
+  set outlines(value: DsnOutline[]) {
+    this._outlines = [...value]
   }
 
-  get pins(): SxClass[] {
+  get pins(): DsnPin[] {
     return [...this._pins]
   }
 
-  set pins(value: SxClass[]) {
+  set pins(value: DsnPin[]) {
     this._pins = [...value]
-  }
-
-  get keepouts(): SxClass[] {
-    return [...this._keepouts]
-  }
-
-  set keepouts(value: SxClass[]) {
-    this._keepouts = [...value]
   }
 
   get otherChildren(): SxClass[] {
@@ -118,9 +120,8 @@ export class DsnImage extends SxClass {
 
   override getChildren(): SxClass[] {
     const children: SxClass[] = []
-    children.push(...this._outline)
+    children.push(...this._outlines)
     children.push(...this._pins)
-    children.push(...this._keepouts)
     children.push(...this._otherChildren)
     return children
   }

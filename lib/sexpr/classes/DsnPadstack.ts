@@ -1,5 +1,6 @@
 import { SxClass } from "../base-classes/SxClass"
 import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
+import { DsnShape } from "./DsnShape"
 
 /**
  * DsnPadstack represents a (padstack ...) definition in the library section.
@@ -15,7 +16,7 @@ import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
  */
 export interface DsnPadstackConstructorParams {
   padstackId?: string
-  shapes?: SxClass[]
+  shapes?: DsnShape[]
   otherChildren?: SxClass[]
 }
 
@@ -25,7 +26,7 @@ export class DsnPadstack extends SxClass {
   token = "padstack"
 
   private _padstackId?: string
-  private _shapes: SxClass[] = []
+  private _shapes: DsnShape[] = []
   private _otherChildren: SxClass[] = []
 
   constructor(params: DsnPadstackConstructorParams = {}) {
@@ -59,12 +60,20 @@ export class DsnPadstack extends SxClass {
       })
 
       if (parsed instanceof SxClass) {
-        // TODO: Route to specific typed arrays when shape classes exist
-        padstack._otherChildren.push(parsed)
+        padstack.consumeChild(parsed)
       }
     }
 
     return padstack
+  }
+
+  private consumeChild(child: SxClass) {
+    if (child instanceof DsnShape) {
+      this._shapes.push(child)
+      return
+    }
+
+    this._otherChildren.push(child)
   }
 
   get padstackId(): string | undefined {
@@ -75,11 +84,11 @@ export class DsnPadstack extends SxClass {
     this._padstackId = value
   }
 
-  get shapes(): SxClass[] {
+  get shapes(): DsnShape[] {
     return [...this._shapes]
   }
 
-  set shapes(value: SxClass[]) {
+  set shapes(value: DsnShape[]) {
     this._shapes = [...value]
   }
 

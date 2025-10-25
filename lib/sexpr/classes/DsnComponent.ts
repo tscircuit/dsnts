@@ -1,5 +1,6 @@
 import { SxClass } from "../base-classes/SxClass"
-import type { PrimitiveSExpr} from "../parseToPrimitiveSExpr"
+import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
+import { DsnPlace } from "./DsnPlace"
 
 /**
  * DsnComponent represents a (component ...) definition in the placement section.
@@ -14,7 +15,7 @@ import type { PrimitiveSExpr} from "../parseToPrimitiveSExpr"
  */
 export interface DsnComponentConstructorParams {
   imageId?: string
-  places?: SxClass[]
+  places?: DsnPlace[]
   otherChildren?: SxClass[]
 }
 
@@ -24,7 +25,7 @@ export class DsnComponent extends SxClass {
   token = "component"
 
   private _imageId?: string
-  private _places: SxClass[] = []
+  private _places: DsnPlace[] = []
   private _otherChildren: SxClass[] = []
 
   constructor(params: DsnComponentConstructorParams = {}) {
@@ -58,12 +59,20 @@ export class DsnComponent extends SxClass {
       })
 
       if (parsed instanceof SxClass) {
-        // TODO: Route to _places array when DsnPlace class exists
-        component._otherChildren.push(parsed)
+        component.consumeChild(parsed)
       }
     }
 
     return component
+  }
+
+  private consumeChild(child: SxClass) {
+    if (child instanceof DsnPlace) {
+      this._places.push(child)
+      return
+    }
+
+    this._otherChildren.push(child)
   }
 
   get imageId(): string | undefined {
@@ -74,11 +83,11 @@ export class DsnComponent extends SxClass {
     this._imageId = value
   }
 
-  get places(): SxClass[] {
+  get places(): DsnPlace[] {
     return [...this._places]
   }
 
-  set places(value: SxClass[]) {
+  set places(value: DsnPlace[]) {
     this._places = [...value]
   }
 

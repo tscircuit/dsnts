@@ -1,6 +1,9 @@
 import { SxClass } from "../base-classes/SxClass"
 import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
 import { DsnBoundary } from "./DsnBoundary"
+import { DsnKeepout } from "./DsnKeepout"
+import { DsnLayer } from "./DsnLayer"
+import { DsnRule } from "./DsnRule"
 
 /**
  * DsnStructure represents the (structure ...) section in DSN files.
@@ -17,6 +20,9 @@ import { DsnBoundary } from "./DsnBoundary"
  */
 export interface DsnStructureConstructorParams {
   boundary?: DsnBoundary
+  layers?: DsnLayer[]
+  rules?: DsnRule[]
+  keepouts?: DsnKeepout[]
   otherChildren?: SxClass[]
 }
 
@@ -26,11 +32,17 @@ export class DsnStructure extends SxClass {
   token = "structure"
 
   private _boundary?: DsnBoundary
+  private _layers: DsnLayer[] = []
+  private _rules: DsnRule[] = []
+  private _keepouts: DsnKeepout[] = []
   private _otherChildren: SxClass[] = []
 
   constructor(params: DsnStructureConstructorParams = {}) {
     super()
     if (params.boundary !== undefined) this.boundary = params.boundary
+    if (params.layers !== undefined) this.layers = params.layers
+    if (params.rules !== undefined) this.rules = params.rules
+    if (params.keepouts !== undefined) this.keepouts = params.keepouts
     if (params.otherChildren !== undefined)
       this.otherChildren = params.otherChildren
   }
@@ -60,13 +72,18 @@ export class DsnStructure extends SxClass {
       this._boundary = child
       return
     }
-
-    // TODO: Add more specific DSN structure children as they're implemented
-    // - DsnLayer
-    // - DsnRule
-    // - DsnVia (DSN-specific, different from KiCad)
-    // - DsnControl
-    // - DsnKeepout
+    if (child instanceof DsnLayer) {
+      this._layers.push(child)
+      return
+    }
+    if (child instanceof DsnRule) {
+      this._rules.push(child)
+      return
+    }
+    if (child instanceof DsnKeepout) {
+      this._keepouts.push(child)
+      return
+    }
 
     this._otherChildren.push(child)
   }
@@ -77,6 +94,30 @@ export class DsnStructure extends SxClass {
 
   set boundary(value: DsnBoundary | undefined) {
     this._boundary = value
+  }
+
+  get layers(): DsnLayer[] {
+    return [...this._layers]
+  }
+
+  set layers(value: DsnLayer[]) {
+    this._layers = [...value]
+  }
+
+  get rules(): DsnRule[] {
+    return [...this._rules]
+  }
+
+  set rules(value: DsnRule[]) {
+    this._rules = [...value]
+  }
+
+  get keepouts(): DsnKeepout[] {
+    return [...this._keepouts]
+  }
+
+  set keepouts(value: DsnKeepout[]) {
+    this._keepouts = [...value]
   }
 
   get otherChildren(): SxClass[] {
@@ -90,6 +131,9 @@ export class DsnStructure extends SxClass {
   override getChildren(): SxClass[] {
     const children: SxClass[] = []
     if (this._boundary) children.push(this._boundary)
+    children.push(...this._layers)
+    children.push(...this._rules)
+    children.push(...this._keepouts)
     children.push(...this._otherChildren)
     return children
   }
