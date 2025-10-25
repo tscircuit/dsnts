@@ -7,6 +7,9 @@ export const parseKicadSexpr = (sexpr: string) => {
   return SxClass.parse(sexpr)
 }
 
+// Alias for Specctra DSN naming (generic S-expression parser)
+export const parseSpectraSexpr = parseKicadSexpr
+
 export const parseKicadSch = (sexpr: string): KicadSch => {
   const [root] = parseKicadSexpr(sexpr)
   if (!(root instanceof KicadSch)) {

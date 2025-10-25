@@ -1,208 +1,130 @@
-# kicadts
+# dsnts
 
-`kicadts` is a TypeScript-first toolkit for reading, editing, and generating KiCad S-expression documents. Every KiCad token is modeled as a class, so you can compose schematics, boards, and footprints entirely in TypeScript and emit KiCad-compatible files with deterministic formatting.
+`dsnts` is a TypeScript-first toolkit for reading, editing, and generating Specctra DSN (Design) and SES (Session) S-expression documents. Every DSN token is modeled as a class, so you can compose PCB designs, routing data, and component placements entirely in TypeScript and emit Specctra-compatible files with deterministic formatting.
 
-[![npm version](https://img.shields.io/npm/v/kicadts.svg)](https://www.npmjs.com/package/kicadts)
+[![npm version](https://img.shields.io/npm/v/dsnts.svg)](https://www.npmjs.com/package/dsnts)
+
+## What is Specctra DSN?
+
+Specctra DSN is an industry-standard file format for PCB design and autorouting. DSN files (`.dsn`) contain board structure, component placement, nets, and design rules. SES files (`.ses`) contain routing session data with wire paths and via placements. These files are commonly used by:
+
+- **FreeRouting** - Open-source autorouter
+- **KiCad** - Exports DSN files for external routing
+- **Altium Designer** - Supports DSN import/export
+- **Commercial autorouters** - Specctra, TopoR, etc.
 
 ## Local Setup
 
 This repository uses [Bun](https://bun.sh) for scripts and testing.
 
 - `bun install`
-- `bun test` — optional, but handy to confirm we still round-trip the KiCad demo files
+- `bun test` — optional, but handy to confirm we still round-trip DSN demo files
 
-## Build KiCad Schematics
+## Status
 
-The high-level classes (`KicadSch`, `Sheet`, `SchematicSymbol`, `Wire`, …) expose setters and getters for their children. Populate the model, then call `getString()` to emit KiCad’s S-expression.
+⚠️ **Work in Progress**: This project is currently being converted from `kicadts` to `dsnts`. Core DSN parsing and generation functionality is under active development. See [TODO.md](./TODO.md) for the implementation roadmap.
+
+## Planned Features
+
+### Load Existing DSN Files
+
+Use the specialized parse functions to load and validate DSN or SES files:
+
+```ts
+import { promises as fs } from "node:fs"
+import { parseSpectraDsn, parseSpectraSes } from "dsnts"
+
+// Load and modify a DSN file
+const dsn = parseSpectraDsn(await fs.readFile("board.dsn", "utf8"))
+dsn.parser = "dsnts"
+await fs.writeFile("board.dsn", dsn.getString())
+
+// Load a routing session file
+const ses = parseSpectraSes(await fs.readFile("board.ses", "utf8"))
+console.log(`Found ${ses.routes?.length || 0} routes`)
+```
+
+### Build DSN Files Programmatically
+
+Compose DSN files with structure, placement, library, network, and wiring sections:
 
 ```ts
 import { promises as fs } from "node:fs"
 import {
-  At,
-  KicadSch,
-  Paper,
-  Property,
-  Sheet,
-  SchematicSymbol,
-  TitleBlock,
-  Wire,
-  Pts,
-  Xy,
-} from "kicadts"
+  SpectraDsn,
+  Structure,
+  Boundary,
+  Network,
+  Net,
+  Library,
+  Padstack,
+} from "dsnts"
 
-const schematic = new KicadSch({
-  version: 20240101,
-  generator: "kicadts-demo",
-  titleBlock: new TitleBlock({
-    title: "Demo Schematic",
-    company: "Example Labs",
+const dsn = new SpectraDsn({
+  parser: "dsnts",
+  resolution: { unit: "mil", value: 10 },
+  structure: new Structure({
+    boundary: new Boundary({
+      // Board outline
+      path: [[0, 0], [100, 0], [100, 80], [0, 80], [0, 0]],
+    }),
   }),
-  paper: new Paper({ size: "A4" }),
-  properties: [new Property({ key: "Sheetfile", value: "demo.kicad_sch" })],
-  sheets: [
-    new Sheet({
-      position: [0, 0, 0], // Can use array instead of new At([0, 0, 0])
-      size: { width: 100, height: 80 },
-    }),
-  ],
-  symbols: [
-    new SchematicSymbol({
-      libraryId: "Device:R",
-      at: { x: 25.4, y: 12.7 }, // Can use object instead of new At([25.4, 12.7])
-    }),
-  ],
-  wires: [
-    new Wire({
-      points: new Pts([new Xy(0, 0), new Xy(25.4, 12.7)]),
-    }),
-  ],
+  network: new Network({
+    nets: [
+      new Net({ name: "GND", pins: ["U1-1", "R1-1"] }),
+      new Net({ name: "VCC", pins: ["U1-2", "C1-1"] }),
+    ],
+  }),
 })
 
-await fs.writeFile("demo.kicad_sch", schematic.getString())
+await fs.writeFile("board.dsn", dsn.getString())
 ```
 
-## Build KiCad PCBs
+### Extract Routing Information
 
-Boards follow the same pattern. Compose `KicadPcb` with nets, footprints, segments, and zones. Footprints are reusable whether you embed them on a board or export them as `.kicad_mod` files.
+Parse SES files to analyze routing results:
 
 ```ts
 import { promises as fs } from "node:fs"
-import {
-  At,
-  Footprint,
-  FootprintPad,
-  FpText,
-  KicadPcb,
-  PadLayers,
-  PadNet,
-  PadSize,
-  PcbNet,
-  TextEffects,
-} from "kicadts"
+import { parseSpectraSes } from "dsnts"
 
-const netGnd = new PcbNet(1, "GND")
-const netSignal = new PcbNet(2, "Net-(R1-Pad2)")
+const ses = parseSpectraSes(await fs.readFile("board.ses", "utf8"))
 
-const makeText = (
-  type: string,
-  text: string,
-  x: number,
-  y: number,
-  layer: string
-) =>
-  new FpText({
-    type,
-    text,
-    position: { x, y },
-    layer,
-    effects: new TextEffects({
-      font: { size: { height: 1, width: 1 }, thickness: 0.15 },
-    }),
-  })
+// Analyze wire segments
+for (const wire of ses.wiring?.wires || []) {
+  console.log(`Net: ${wire.net}, Layer: ${wire.layer}`)
+  console.log(`Path: ${wire.path.join(" -> ")}`)
+}
 
-const pad = (number: string, x: number, net: PcbNet) =>
-  new FootprintPad({
-    number,
-    padType: "smd",
-    shape: "roundrect",
-    at: { x, y: 0 },
-    size: { width: 1.05, height: 0.95 },
-    layers: ["F.Cu", "F.Paste", "F.Mask"],
-    roundrectRatio: 0.25,
-    net: new PadNet(net.id, net.name),
-    pinfunction: number,
-    pintype: "passive",
-  })
-
-const pcb = new KicadPcb({
-  version: 20240101,
-  generator: "kicadts-demo",
-  nets: [netGnd, netSignal],
-  footprints: [
-    new Footprint({
-      libraryLink: "Resistor_SMD:R_0603",
-      layer: "F.Cu",
-      position: { x: 10, y: 5, angle: 90 },
-      fpTexts: [
-        makeText("reference", "R1", 0, -1.5, "F.SilkS"),
-        makeText("value", "10k", 0, 1.5, "F.Fab"),
-      ],
-      fpPads: [pad("1", -0.8, netGnd), pad("2", 0.8, netSignal)],
-    }),
-  ],
-})
-
-await fs.writeFile("demo.kicad_pcb", pcb.getString())
+// Analyze vias
+for (const via of ses.wiring?.vias || []) {
+  console.log(`Via at ${via.position}, Padstack: ${via.padstack}`)
+}
 ```
 
-## Build Stand-Alone Footprints
+## Architecture
 
-Footprints can live outside a board file (for library `.kicad_mod` entries). Populate `Footprint` and write the S-expression to disk.
+`dsnts` follows the same proven architecture as `kicadts`:
 
-```ts
-import { promises as fs } from "node:fs"
-import {
-  At,
-  Footprint,
-  FootprintPad,
-  FpText,
-  PadLayers,
-  PadSize,
-  TextEffects,
-} from "kicadts"
+- **S-expression base classes** - `SxClass` handles parsing and serialization
+- **Token-based class system** - Each DSN element (pcb, structure, network, etc.) is a class
+- **Type-safe constructors** - Full TypeScript support with getters/setters
+- **Round-trip testing** - Output matches input formatting exactly
+- **Flexible syntax** - Use objects, arrays, or class instances in constructors
 
-const footprint = new Footprint({
-  libraryLink: "Demo:TestPad",
-  layer: "F.Cu",
-  position: [0, 0], // Array format
-  fpTexts: [
-    new FpText({
-      type: "reference",
-      text: "REF**",
-      position: { x: 0, y: -1.5 },
-      layer: "F.SilkS",
-      effects: new TextEffects({
-        font: { size: { height: 1, width: 1 }, thickness: 0.15 },
-      }),
-    }),
-  ],
-  fpPads: [
-    new FootprintPad({
-      number: "1",
-      padType: "smd",
-      shape: "rect",
-      at: [0, 0], // You can also use { x, y } form
-      size: { width: 1.5, height: 1.5 },
-      layers: ["F.Cu", "F.Paste", "F.Mask"],
-    }),
-  ],
-})
+For generic S-expression parsing, use `parseSpectraSexpr` which returns an array of `SxClass` instances. Any class exposes `getChildren()` if you need to walk the tree manually.
 
-await fs.writeFile("Demo_TestPad.kicad_mod", footprint.getString())
-```
+## Resources
 
-## Load Existing KiCad Files
+- [Specctra DSN Specification (PDF)](https://cdn.hackaday.io/files/1666717130852064/specctra.pdf)
+- [FreeRouting Project](https://github.com/freerouting/freerouting) - Open-source autorouter
+- [KiCad DSN Export](https://docs.kicad.org/master/en/pcbnew/pcbnew.html#_exporters) - How KiCad generates DSN files
+- [Layout Editor DSN Format](https://layouteditor.org/layout/file-formats/dsn) - Format overview
 
-Use the specialized parse functions to load and validate schematics, boards, or footprints. Each function ensures the root element is the expected type.
+## Contributing
 
-```ts
-import { promises as fs } from "node:fs"
-import { parseKicadSch, parseKicadPcb, parseKicadMod } from "kicadts"
+This project is under active development. Check [TODO.md](./TODO.md) for the current implementation status and roadmap. Contributions are welcome!
 
-// Load and modify a schematic
-const schematic = parseKicadSch(await fs.readFile("existing.kicad_sch", "utf8"))
-schematic.generator = "kicadts"
-await fs.writeFile("existing.kicad_sch", schematic.getString())
+## License
 
-// Load and modify a PCB
-const pcb = parseKicadPcb(await fs.readFile("existing.kicad_pcb", "utf8"))
-pcb.generatorVersion = "(generated programmatically)"
-await fs.writeFile("existing.kicad_pcb", pcb.getString())
-
-// Load and modify a footprint
-const footprint = parseKicadMod(await fs.readFile("Demo_TestPad.kicad_mod", "utf8"))
-footprint.descr = "Imported with kicadts"
-await fs.writeFile("Demo_TestPad.kicad_mod", footprint.getString())
-```
-
-For generic S-expression parsing, use `parseKicadSexpr` which returns an array of `SxClass` instances. Any class exposes `getChildren()` if you need to walk the tree manually, and snapshot tests (`bun test`) ensure the emitted S-expression stays identical to KiCad's own formatting.
+See [LICENSE](./LICENSE) file for details.

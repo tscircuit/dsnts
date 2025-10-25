@@ -1,11 +1,12 @@
 {
-  "name": "kicadts",
+  "name": "dsnts",
   "main": "dist/index.js",
-  "version": "0.0.11",
+  "version": "0.1.0",
   "type": "module",
+  "description": "TypeScript-first toolkit for reading, editing, and generating Specctra DSN S-expression documents",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tscircuit/kicadts"
+    "url": "https://github.com/tscircuit/dsnts"
   },
   "files": [
     "dist"
@@ -13,7 +14,7 @@
   "scripts": {
     "build": "tsup-node lib/index.ts --format esm --dts",
     "download-references": "bun run scripts/download-references.ts",
-    "download-demos": "git clone --depth 1 --filter=blob:none --sparse https://gitlab.com/kicad/code/kicad.git kicad-demos && cd kicad-demos && git sparse-checkout set demos",
+    "download-demos": "echo 'TODO: Add DSN sample file download'",
     "typecheck": "bunx tsc --noEmit",
     "format": "biome format --write .",
     "format:check": "biome format ."

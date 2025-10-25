@@ -7,27 +7,20 @@ type ReferenceSpec = {
   readonly filename: string
 }
 
+// TODO: Add actual DSN specification references
+// The main Specctra specification PDF is at:
+// https://cdn.hackaday.io/files/1666717130852064/specctra.pdf
+//
+// Other useful references:
+// - FreeRouting documentation: https://github.com/freerouting/freerouting
+// - Layout Editor DSN format: https://layouteditor.org/layout/file-formats/dsn
+
 const references: ReferenceSpec[] = [
-  {
-    url: "https://gitlab.com/kicad/services/kicad-dev-docs/-/raw/master/content/file-formats/sexpr-intro/_index.en.adoc",
-    filename: "SEXPR_MAIN.adoc",
-  },
-  {
-    url: "https://gitlab.com/kicad/services/kicad-dev-docs/-/raw/master/content/file-formats/sexpr-schematic/_index.en.adoc",
-    filename: "SCHEMATIC_SEXPR.adoc",
-  },
-  {
-    url: "https://gitlab.com/kicad/services/kicad-dev-docs/-/raw/master/content/file-formats/sexpr-pcb/_index.en.adoc",
-    filename: "PCB_SEXPR.adoc",
-  },
-  {
-    url: "https://gitlab.com/kicad/services/kicad-dev-docs/-/raw/master/content/file-formats/sexpr-footprint/_index.en.adoc",
-    filename: "FOOTPRINT_SEXPR.adoc",
-  },
-  {
-    url: "https://gitlab.com/kicad/services/kicad-dev-docs/-/raw/master/content/file-formats/sexpr-symbol-lib/_index.en.adoc",
-    filename: "SCH_SYM_SEXPR.adoc",
-  },
+  // Placeholder - will add actual DSN format references
+  // {
+  //   url: "https://cdn.hackaday.io/files/1666717130852064/specctra.pdf",
+  //   filename: "SPECCTRA_SPEC.pdf",
+  // },
 ]
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -52,6 +45,11 @@ async function fetchReference(reference: ReferenceSpec): Promise<void> {
 
 async function main(): Promise<void> {
   await mkdir(referencesDir, { recursive: true })
+
+  if (references.length === 0) {
+    console.log("No references configured yet. See TODO.md for implementation plan.")
+    return
+  }
 
   await Promise.all(
     references.map(async (reference) => {
