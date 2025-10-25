@@ -1,5 +1,13 @@
 import { SxClass } from "../base-classes/SxClass"
 import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
+import { DsnParser } from "./DsnParser"
+import { DsnResolution } from "./DsnResolution"
+import { DsnUnit } from "./DsnUnit"
+import { DsnStructure } from "./DsnStructure"
+import { DsnPlacement } from "./DsnPlacement"
+import { DsnLibrary } from "./DsnLibrary"
+import { DsnNetwork } from "./DsnNetwork"
+import { DsnWiring } from "./DsnWiring"
 
 /**
  * SpectraDsn represents the root of a Specctra DSN (Design) file.
@@ -18,13 +26,23 @@ import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
  */
 export interface SpectraDsnConstructorParams {
   /** Parser name/version string */
-  parser?: string
+  parser?: string | DsnParser
   /** Board design name */
   designName?: string
   /** Resolution unit and value */
-  resolution?: { unit: string; value: number }
+  resolution?: DsnResolution
   /** Unit type (mil, mm, etc.) */
-  unit?: string
+  unit?: string | DsnUnit
+  /** Structure section (boundary, layers, rules) */
+  structure?: DsnStructure
+  /** Placement section (component placements) */
+  placement?: DsnPlacement
+  /** Library section (padstacks, images) */
+  library?: DsnLibrary
+  /** Network section (nets, classes) */
+  network?: DsnNetwork
+  /** Wiring section (routes, vias) */
+  wiring?: DsnWiring
   /** Other parsed children not yet implemented */
   otherChildren?: SxClass[]
 }
@@ -34,9 +52,14 @@ export class SpectraDsn extends SxClass {
   token = "pcb"
 
   private _designName?: string
-  private _parser?: string
-  private _resolution?: { unit: string; value: number }
-  private _unit?: string
+  private _sxParser?: DsnParser
+  private _sxResolution?: DsnResolution
+  private _sxUnit?: DsnUnit
+  private _sxStructure?: DsnStructure
+  private _sxPlacement?: DsnPlacement
+  private _sxLibrary?: DsnLibrary
+  private _sxNetwork?: DsnNetwork
+  private _sxWiring?: DsnWiring
   private _otherChildren: SxClass[] = []
 
   constructor(params: SpectraDsnConstructorParams = {}) {
@@ -45,6 +68,11 @@ export class SpectraDsn extends SxClass {
     if (params.designName !== undefined) this.designName = params.designName
     if (params.resolution !== undefined) this.resolution = params.resolution
     if (params.unit !== undefined) this.unit = params.unit
+    if (params.structure !== undefined) this.structure = params.structure
+    if (params.placement !== undefined) this.placement = params.placement
+    if (params.library !== undefined) this.library = params.library
+    if (params.network !== undefined) this.network = params.network
+    if (params.wiring !== undefined) this.wiring = params.wiring
     if (params.otherChildren !== undefined)
       this.otherChildren = params.otherChildren
   }
@@ -73,7 +101,7 @@ export class SpectraDsn extends SxClass {
 
       // Try to parse as SxClass
       const parsed = SxClass.parsePrimitiveSexpr(primitive, {
-        parentToken: this.token,
+        parentToken: SpectraDsn.token,
       })
 
       if (parsed instanceof SxClass) {
@@ -85,10 +113,40 @@ export class SpectraDsn extends SxClass {
   }
 
   private consumeChild(child: SxClass) {
-    // TODO: As we implement DSN-specific classes (Parser, Resolution, Structure, etc.),
-    // add instanceof checks here similar to KicadPcb.consumeChild()
-    //
-    // For now, store all children as otherChildren
+    if (child instanceof DsnParser) {
+      this._sxParser = child
+      return
+    }
+    if (child instanceof DsnResolution) {
+      this._sxResolution = child
+      return
+    }
+    if (child instanceof DsnUnit) {
+      this._sxUnit = child
+      return
+    }
+    if (child instanceof DsnStructure) {
+      this._sxStructure = child
+      return
+    }
+    if (child instanceof DsnPlacement) {
+      this._sxPlacement = child
+      return
+    }
+    if (child instanceof DsnLibrary) {
+      this._sxLibrary = child
+      return
+    }
+    if (child instanceof DsnNetwork) {
+      this._sxNetwork = child
+      return
+    }
+    if (child instanceof DsnWiring) {
+      this._sxWiring = child
+      return
+    }
+
+    // Store unrecognized children
     this._otherChildren.push(child)
   }
 
@@ -101,27 +159,79 @@ export class SpectraDsn extends SxClass {
   }
 
   get parser(): string | undefined {
-    return this._parser
+    return this._sxParser?.value
   }
 
-  set parser(value: string | undefined) {
-    this._parser = value
+  set parser(value: string | DsnParser | undefined) {
+    if (value === undefined) {
+      this._sxParser = undefined
+    } else if (typeof value === "string") {
+      this._sxParser = new DsnParser(value)
+    } else {
+      this._sxParser = value
+    }
   }
 
-  get resolution(): { unit: string; value: number } | undefined {
-    return this._resolution
+  get resolution(): DsnResolution | undefined {
+    return this._sxResolution
   }
 
-  set resolution(value: { unit: string; value: number } | undefined) {
-    this._resolution = value
+  set resolution(value: DsnResolution | undefined) {
+    this._sxResolution = value
   }
 
   get unit(): string | undefined {
-    return this._unit
+    return this._sxUnit?.value
   }
 
-  set unit(value: string | undefined) {
-    this._unit = value
+  set unit(value: string | DsnUnit | undefined) {
+    if (value === undefined) {
+      this._sxUnit = undefined
+    } else if (typeof value === "string") {
+      this._sxUnit = new DsnUnit(value)
+    } else {
+      this._sxUnit = value
+    }
+  }
+
+  get structure(): DsnStructure | undefined {
+    return this._sxStructure
+  }
+
+  set structure(value: DsnStructure | undefined) {
+    this._sxStructure = value
+  }
+
+  get placement(): DsnPlacement | undefined {
+    return this._sxPlacement
+  }
+
+  set placement(value: DsnPlacement | undefined) {
+    this._sxPlacement = value
+  }
+
+  get library(): DsnLibrary | undefined {
+    return this._sxLibrary
+  }
+
+  set library(value: DsnLibrary | undefined) {
+    this._sxLibrary = value
+  }
+
+  get network(): DsnNetwork | undefined {
+    return this._sxNetwork
+  }
+
+  set network(value: DsnNetwork | undefined) {
+    this._sxNetwork = value
+  }
+
+  get wiring(): DsnWiring | undefined {
+    return this._sxWiring
+  }
+
+  set wiring(value: DsnWiring | undefined) {
+    this._sxWiring = value
   }
 
   get otherChildren(): SxClass[] {
@@ -138,11 +248,15 @@ export class SpectraDsn extends SxClass {
     // Design name is output as a string primitive, not an SxClass
     // It will be handled specially in getString()
 
-    // TODO: Add specific DSN children here as they're implemented
-    // if (this._sxParser) children.push(this._sxParser)
-    // if (this._sxResolution) children.push(this._sxResolution)
-    // if (this._sxStructure) children.push(this._sxStructure)
-    // etc.
+    // Add DSN-specific children in typical DSN file order
+    if (this._sxParser) children.push(this._sxParser)
+    if (this._sxResolution) children.push(this._sxResolution)
+    if (this._sxUnit) children.push(this._sxUnit)
+    if (this._sxStructure) children.push(this._sxStructure)
+    if (this._sxPlacement) children.push(this._sxPlacement)
+    if (this._sxLibrary) children.push(this._sxLibrary)
+    if (this._sxNetwork) children.push(this._sxNetwork)
+    if (this._sxWiring) children.push(this._sxWiring)
 
     children.push(...this._otherChildren)
     return children

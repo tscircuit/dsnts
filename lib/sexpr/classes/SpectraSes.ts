@@ -63,7 +63,7 @@ export class SpectraSes extends SxClass {
 
       // Try to parse as SxClass
       const parsed = SxClass.parsePrimitiveSexpr(primitive, {
-        parentToken: this.token,
+        parentToken: SpectraSes.token,
       })
 
       if (parsed instanceof SxClass) {
