@@ -64,9 +64,11 @@ export abstract class SxClass {
       throw new Error("Class must have a static override token")
     }
     const parentKey = newClass.parentToken ?? DEFAULT_PARENT_TOKEN
-    const existing = SxClass.classes[newClass.token] ?? {}
+    // Normalize token to lowercase for case-insensitive matching (DSN spec)
+    const normalizedToken = newClass.token.toLowerCase()
+    const existing = SxClass.classes[normalizedToken] ?? {}
     existing[parentKey] = newClass
-    SxClass.classes[newClass.token] = existing
+    SxClass.classes[normalizedToken] = existing
   }
 
   /**
@@ -96,7 +98,9 @@ export abstract class SxClass {
       typeof primitiveSexpr[0] === "string"
     ) {
       const classToken = primitiveSexpr[0] as string
-      const classGroup = SxClass.classes[classToken]
+      // Normalize token to lowercase for case-insensitive matching (DSN spec)
+      const normalizedToken = classToken.toLowerCase()
+      const classGroup = SxClass.classes[normalizedToken]
       if (!classGroup) {
         throw new Error(
           `Class "${classToken}" not registered via SxClass.register`,

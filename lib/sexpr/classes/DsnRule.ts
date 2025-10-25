@@ -41,4 +41,11 @@ export class DsnRule extends SxClass {
   }
 }
 
+// Register for both structure and class parents
 SxClass.register(DsnRule)
+// Also register with class parent token
+SxClass.register(
+  class extends DsnRule {
+    static override parentToken = "class"
+  },
+)

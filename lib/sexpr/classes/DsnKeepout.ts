@@ -40,4 +40,11 @@ export class DsnKeepout extends SxClass {
   }
 }
 
+// Register for both structure and image parents
 SxClass.register(DsnKeepout)
+// Also register with image parent token
+SxClass.register(
+  class extends DsnKeepout {
+    static override parentToken = "image"
+  },
+)

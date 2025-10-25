@@ -19,10 +19,6 @@ const demos: DemoSpec[] = [
     filename: "BBD_Mars-64.dsn",
   },
   {
-    url: "https://raw.githubusercontent.com/freerouting/freerouting/master/tests/Issue006-LPC18XX_43XX_SCH.dsn",
-    filename: "Issue006-LPC18XX_43XX_SCH.dsn",
-  },
-  {
     url: "https://raw.githubusercontent.com/freerouting/freerouting/master/tests/Issue110-testPCBSpecctraFile.dsn",
     filename: "Issue110-testPCBSpecctraFile.dsn",
   },

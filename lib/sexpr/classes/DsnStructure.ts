@@ -1,9 +1,11 @@
 import { SxClass } from "../base-classes/SxClass"
 import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
 import { DsnBoundary } from "./DsnBoundary"
+import { DsnControl } from "./DsnControl"
 import { DsnKeepout } from "./DsnKeepout"
 import { DsnLayer } from "./DsnLayer"
 import { DsnRule } from "./DsnRule"
+import { DsnVia } from "./DsnVia"
 
 /**
  * DsnStructure represents the (structure ...) section in DSN files.
@@ -22,6 +24,8 @@ export interface DsnStructureConstructorParams {
   boundary?: DsnBoundary
   layers?: DsnLayer[]
   rules?: DsnRule[]
+  vias?: DsnVia[]
+  control?: DsnControl
   keepouts?: DsnKeepout[]
   otherChildren?: SxClass[]
 }
@@ -34,6 +38,8 @@ export class DsnStructure extends SxClass {
   private _boundary?: DsnBoundary
   private _layers: DsnLayer[] = []
   private _rules: DsnRule[] = []
+  private _vias: DsnVia[] = []
+  private _control?: DsnControl
   private _keepouts: DsnKeepout[] = []
   private _otherChildren: SxClass[] = []
 
@@ -42,6 +48,8 @@ export class DsnStructure extends SxClass {
     if (params.boundary !== undefined) this.boundary = params.boundary
     if (params.layers !== undefined) this.layers = params.layers
     if (params.rules !== undefined) this.rules = params.rules
+    if (params.vias !== undefined) this.vias = params.vias
+    if (params.control !== undefined) this.control = params.control
     if (params.keepouts !== undefined) this.keepouts = params.keepouts
     if (params.otherChildren !== undefined)
       this.otherChildren = params.otherChildren
@@ -80,6 +88,14 @@ export class DsnStructure extends SxClass {
       this._rules.push(child)
       return
     }
+    if (child instanceof DsnVia) {
+      this._vias.push(child)
+      return
+    }
+    if (child instanceof DsnControl) {
+      this._control = child
+      return
+    }
     if (child instanceof DsnKeepout) {
       this._keepouts.push(child)
       return
@@ -112,6 +128,22 @@ export class DsnStructure extends SxClass {
     this._rules = [...value]
   }
 
+  get vias(): DsnVia[] {
+    return [...this._vias]
+  }
+
+  set vias(value: DsnVia[]) {
+    this._vias = [...value]
+  }
+
+  get control(): DsnControl | undefined {
+    return this._control
+  }
+
+  set control(value: DsnControl | undefined) {
+    this._control = value
+  }
+
   get keepouts(): DsnKeepout[] {
     return [...this._keepouts]
   }
@@ -133,6 +165,8 @@ export class DsnStructure extends SxClass {
     if (this._boundary) children.push(this._boundary)
     children.push(...this._layers)
     children.push(...this._rules)
+    children.push(...this._vias)
+    if (this._control) children.push(this._control)
     children.push(...this._keepouts)
     children.push(...this._otherChildren)
     return children

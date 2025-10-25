@@ -122,4 +122,11 @@ export class DsnNet extends SxClass {
   }
 }
 
+// Register for both network and wire parents
 SxClass.register(DsnNet)
+// Also register with wire parent token
+SxClass.register(
+  class extends DsnNet {
+    static override parentToken = "wire"
+  },
+)
