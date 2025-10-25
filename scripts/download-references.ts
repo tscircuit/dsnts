@@ -47,7 +47,9 @@ async function main(): Promise<void> {
   await mkdir(referencesDir, { recursive: true })
 
   if (references.length === 0) {
-    console.log("No references configured yet. See TODO.md for implementation plan.")
+    console.log(
+      "No references configured yet. See TODO.md for implementation plan.",
+    )
     return
   }
 
