@@ -14,11 +14,11 @@ The current architecture uses:
 ## Phase 1: Repository Rebranding & Setup
 
 ### 1.1 Package Configuration
-- [ ] Update `package.json`:
-  - [ ] Change `name` from `"kicadts"` to `"dsnts"`
-  - [ ] Update repository URL to new repo location
-  - [ ] Update description to reference Specctra DSN files
-  - [ ] Update version to `0.1.0` (fresh start)
+- [x] Update `package.json`:
+  - [x] Change `name` from `"kicadts"` to `"dsnts"`
+  - [x] Update repository URL to new repo location
+  - [x] Update description to reference Specctra DSN files
+  - [x] Update version to `0.1.0` (fresh start)
 - [ ] Update `README.md`:
   - [ ] Replace all KiCad references with Specctra DSN
   - [ ] Rewrite examples to show DSN file usage
@@ -37,129 +37,129 @@ The current architecture uses:
 ## Phase 2: Core Architecture - Root Classes
 
 ### 2.1 Main DSN File Class
-- [ ] Create `SpectraDsn` class (replaces `KicadPcb`):
-  - [ ] Token: `"pcb"` (DSN files start with `(pcb ...)`)
-  - [ ] Properties: parser, resolution, unit, structure, placement, library, network, wiring, etc.
-  - [ ] Follow same pattern as `KicadPcb.ts` for constructor and getters/setters
-  - [ ] Location: `lib/sexpr/classes/SpectraDsn.ts`
+- [x] Create `SpectraDsn` class (replaces `KicadPcb`):
+  - [x] Token: `"pcb"` (DSN files start with `(pcb ...)`)
+  - [x] Properties: parser, resolution, unit, structure, placement, library, network, wiring, etc.
+  - [x] Follow same pattern as `KicadPcb.ts` for constructor and getters/setters
+  - [x] Location: `lib/sexpr/classes/SpectraDsn.ts`
 
 ### 2.2 Session (SES) File Class
-- [ ] Create `SpectraSes` class (for session files):
-  - [ ] Token: `"session"` (SES files start with `(session ...)`)
-  - [ ] Properties: base_design, placement, was_is, routes, etc.
-  - [ ] Location: `lib/sexpr/classes/SpectraSes.ts`
+- [x] Create `SpectraSes` class (for session files):
+  - [x] Token: `"session"` (SES files start with `(session ...)`)
+  - [x] Properties: base_design, placement, was_is, routes, etc.
+  - [x] Location: `lib/sexpr/classes/SpectraSes.ts`
 
 ### 2.3 Remove KiCad-Specific Root Classes
-- [ ] Delete or deprecate:
-  - [ ] `KicadSch.ts` (DSN doesn't have schematics)
-  - [ ] `KicadPcb.ts` (replaced by SpectraDsn)
-  - [ ] `KicadSchGenerator.ts`, `KicadSchVersion.ts`, etc.
+- [x] Delete or deprecate:
+  - [x] `KicadSch.ts` (DSN doesn't have schematics)
+  - [x] `KicadPcb.ts` (replaced by SpectraDsn)
+  - [x] `KicadSchGenerator.ts`, `KicadSchVersion.ts`, etc.
 
 ## Phase 3: DSN Structure Classes
 
 ### 3.1 Top-Level DSN Components
-- [ ] Create `Parser` class - `(parser ...)`
-- [ ] Create `Resolution` class - `(resolution ...)`
-- [ ] Create `Unit` class - `(unit ...)`
-- [ ] Create `Structure` class - `(structure ...)`
-  - [ ] Child: `Boundary` - `(boundary ...)`
-  - [ ] Child: `Via` - `(via ...)` (different from KiCad via)
-  - [ ] Child: `Rule` - `(rule ...)`
-  - [ ] Child: `Keepout` - `(keepout ...)`
-- [ ] Create `Placement` class - `(placement ...)`
-  - [ ] Child: `Component` - `(component ...)`
-  - [ ] Child: `PlaceComponent` - `(place ...)`
-- [ ] Create `Library` class - `(library ...)`
-  - [ ] Child: `Image` - `(image ...)` (footprint definition)
-  - [ ] Child: `Padstack` - `(padstack ...)`
-- [ ] Create `Network` class - `(network ...)`
-  - [ ] Child: `Net` - `(net ...)`
-  - [ ] Child: `NetClass` - `(class ...)`
-  - [ ] Child: `NetPin` - `(pin ...)`
-- [ ] Create `Wiring` class - `(wiring ...)`
-  - [ ] Child: `Wire` - `(wire ...)` (different from KiCad wire)
-  - [ ] Child: `WirePath` - `(path ...)`
-  - [ ] Child: `WireVia` - `(via ...)`
+- [x] Create `Parser` class - `(parser ...)` → DsnParser
+- [x] Create `Resolution` class - `(resolution ...)` → DsnResolution
+- [x] Create `Unit` class - `(unit ...)` → DsnUnit
+- [x] Create `Structure` class - `(structure ...)` → DsnStructure
+  - [x] Child: `Boundary` - `(boundary ...)` → DsnBoundary
+  - [x] Child: `Via` - `(via ...)` (different from KiCad via)
+  - [x] Child: `Rule` - `(rule ...)` → DsnRule
+  - [x] Child: `Keepout` - `(keepout ...)` → DsnKeepout
+- [x] Create `Placement` class - `(placement ...)` → DsnPlacement
+  - [x] Child: `Component` - `(component ...)` → DsnComponent
+  - [x] Child: `PlaceComponent` - `(place ...)` → DsnPlace
+- [x] Create `Library` class - `(library ...)` → DsnLibrary
+  - [x] Child: `Image` - `(image ...)` (footprint definition) → DsnImage
+  - [x] Child: `Padstack` - `(padstack ...)` → DsnPadstack
+- [x] Create `Network` class - `(network ...)` → DsnNetwork
+  - [x] Child: `Net` - `(net ...)` → DsnNet
+  - [x] Child: `NetClass` - `(class ...)` → DsnClass
+  - [x] Child: `NetPin` - `(pin ...)` → DsnPin
+- [x] Create `Wiring` class - `(wiring ...)` → DsnWiring
+  - [x] Child: `Wire` - `(wire ...)` (different from KiCad wire) → DsnWire
+  - [x] Child: `WirePath` - `(path ...)` → DsnPath
+  - [x] Child: `WireVia` - `(via ...)`
 
 ### 3.2 Geometry & Design Rule Classes
-- [ ] Create `Rule` class hierarchy:
-  - [ ] `WidthRule` - `(width ...)`
-  - [ ] `ClearanceRule` - `(clearance ...)`
+- [x] Create `Rule` class hierarchy:
+  - [x] `WidthRule` - `(width ...)`
+  - [x] `ClearanceRule` - `(clearance ...)`
   - [ ] `CircleDescriptor` - `(circle ...)`
-  - [ ] `PathDescriptor` - `(path ...)`
+  - [x] `PathDescriptor` - `(path ...)` → DsnPath
   - [ ] `PolygonDescriptor` - `(polygon ...)`
-  - [ ] `RectDescriptor` - `(rect ...)`
-- [ ] Create coordinate classes:
-  - [ ] `Coordinate` - Generic coordinate handling
-  - [ ] May be able to reuse `At`, `Xy`, `Pts` with modifications
+  - [x] `RectDescriptor` - `(rect ...)` → DsnRect
+- [x] Create coordinate classes:
+  - [x] `Coordinate` - Generic coordinate handling
+  - [x] Reuse `At`, `Xy`, `Pts` with modifications
 
 ### 3.3 Layer System
-- [ ] Create DSN-specific layer classes:
-  - [ ] `DsnLayer` class - `(layer ...)` (different structure than KiCad)
+- [x] Create DSN-specific layer classes:
+  - [x] `DsnLayer` class - `(layer ...)` (different structure than KiCad)
   - [ ] `LayerPair` - `(layer_pair ...)`
   - [ ] Update or create `DsnLayers` (collection class)
-- [ ] Remove KiCad layer-specific classes:
-  - [ ] `PcbLayers.ts`, `PcbLayerDefinition.ts` (KiCad-specific)
+- [x] Remove KiCad layer-specific classes:
+  - [x] `PcbLayers.ts`, `PcbLayerDefinition.ts` (KiCad-specific)
 
 ## Phase 4: Component & Footprint Classes
 
 ### 4.1 DSN Component System
-- [ ] Create `DsnComponent` class - `(component ...)`
-  - [ ] Properties: image reference, placement info
-  - [ ] Different from KiCad `Footprint` structure
-- [ ] Create `DsnImage` class - `(image ...)`
-  - [ ] Replaces KiCad `Footprint` for library definitions
-  - [ ] Contains outline, pins, keepouts
-- [ ] Create `Padstack` class - `(padstack ...)`
-  - [ ] Defines pad shapes for different layers
-  - [ ] More complex than KiCad pad definitions
+- [x] Create `DsnComponent` class - `(component ...)`
+  - [x] Properties: image reference, placement info
+  - [x] Different from KiCad `Footprint` structure
+- [x] Create `DsnImage` class - `(image ...)`
+  - [x] Replaces KiCad `Footprint` for library definitions
+  - [x] Contains outline, pins, keepouts
+- [x] Create `Padstack` class - `(padstack ...)`
+  - [x] Defines pad shapes for different layers
+  - [x] More complex than KiCad pad definitions
 
 ### 4.2 Remove KiCad Footprint Classes
-- [ ] Delete/archive these KiCad-specific classes:
-  - [ ] `Footprint.ts` and all `Footprint*` classes (~25 files)
-  - [ ] `FootprintPad.ts` and all `Pad*` classes (~25 files)
-  - [ ] `FpText.ts`, `FpTextBox.ts`, `FpLine.ts`, `FpRect.ts`, `FpCircle.ts`, `FpArc.ts`, `FpPoly.ts`, etc. (~10 files)
+- [x] Delete/archive these KiCad-specific classes:
+  - [x] `Footprint.ts` and all `Footprint*` classes (~25 files)
+  - [x] `FootprintPad.ts` and all `Pad*` classes (~25 files)
+  - [x] `FpText.ts`, `FpTextBox.ts`, `FpLine.ts`, `FpRect.ts`, `FpCircle.ts`, `FpArc.ts`, `FpPoly.ts`, etc. (~10 files)
 
 ## Phase 5: Nets & Routing Classes
 
 ### 5.1 Network System
-- [ ] Create `DsnNet` class - `(net ...)` in network section
-  - [ ] Different structure than KiCad `PcbNet`
-  - [ ] Contains pins, class assignments
-- [ ] Create `NetClass` class - `(class ...)`
-  - [ ] Groups nets with similar rules
-- [ ] Create `Pin` class - `(pin ...)`
-  - [ ] References component pins in nets
+- [x] Create `DsnNet` class - `(net ...)` in network section
+  - [x] Different structure than KiCad `PcbNet`
+  - [x] Contains pins, class assignments
+- [x] Create `NetClass` class - `(class ...)` → DsnClass
+  - [x] Groups nets with similar rules
+- [x] Create `Pin` class - `(pin ...)` → DsnPin
+  - [x] References component pins in nets
 
 ### 5.2 Wiring & Routing
-- [ ] Create `DsnWire` class - `(wire ...)`
-  - [ ] Different from schematic `Wire`
-  - [ ] Contains routing information
-- [ ] Create `Path` class - `(path ...)`
-  - [ ] Route geometry
-- [ ] Create `DsnVia` class - `(via ...)`
-  - [ ] Simpler than KiCad via structure
+- [x] Create `DsnWire` class - `(wire ...)`
+  - [x] Different from schematic `Wire`
+  - [x] Contains routing information
+- [x] Create `Path` class - `(path ...)` → DsnPath
+  - [x] Route geometry
+- [x] Create `DsnVia` class - `(via ...)`
+  - [x] Simpler than KiCad via structure
 
 ### 5.3 Remove KiCad Routing Classes
-- [ ] Delete/archive:
-  - [ ] `Segment.ts`, `SegmentStart.ts`, `SegmentEnd.ts`, etc.
-  - [ ] `Zone.ts` (no zone concept in DSN)
-  - [ ] KiCad-specific `Via.ts`
+- [x] Delete/archive:
+  - [x] `Segment.ts`, `SegmentStart.ts`, `SegmentEnd.ts`, etc.
+  - [x] `Zone.ts` (no zone concept in DSN)
+  - [x] KiCad-specific `Via.ts`
 
 ## Phase 6: Graphics & Design Elements
 
 ### 6.1 DSN Graphics
-- [ ] Create boundary/outline classes:
-  - [ ] `Outline` - `(outline ...)`
+- [x] Create boundary/outline classes:
+  - [x] `Outline` - `(outline ...)` → DsnOutline
   - [ ] `Window` - `(window ...)` (cutouts)
-- [ ] Adapt or create shape classes:
+- [x] Adapt or create shape classes:
   - [ ] `Circle`, `Path`, `Polygon`, `Rectangle`
-  - [ ] May be able to reuse some existing shape classes with modifications
+  - [x] Reuse some existing shape classes with modifications (DsnShape, DsnPath, DsnRect)
 
 ### 6.2 Remove KiCad Graphics
-- [ ] Delete/archive:
-  - [ ] `GrLine.ts`, `GrText.ts` and related classes
-  - [ ] KiCad-specific drawing primitives
+- [x] Delete/archive:
+  - [x] `GrLine.ts`, `GrText.ts` and related classes
+  - [x] KiCad-specific drawing primitives
 
 ## Phase 7: Common/Reusable Classes
 
@@ -173,16 +173,16 @@ The current architecture uses:
   - [ ] `Layer.ts` - May need modification for DSN layer format
 
 ### 7.2 Remove KiCad-Specific
-- [ ] Delete/archive:
-  - [ ] `Paper.ts`, `TitleBlock.ts` (schematic-specific)
-  - [ ] `Property.ts`, `PropertyUnlocked.ts`, `PropertyHide.ts` (KiCad-specific)
-  - [ ] `Sheet.ts`, `SheetPin.ts`, etc. (schematic-specific)
-  - [ ] `Symbol.ts`, `LibSymbols.ts` (schematic-specific)
-  - [ ] `Bus.ts`, `BusEntry.ts`, `Junction.ts`, `NoConnect.ts`, `Label.ts`, `GlobalLabel.ts` (schematic-specific)
-  - [ ] `SchematicText.ts`
-  - [ ] `Setup.ts` (KiCad PCB setup - different in DSN)
-  - [ ] `PcbGeneral.ts`, `PcbGeneralThickness.ts`, etc.
-  - [ ] `EmbeddedFonts.ts`, `FieldsAutoplaced.ts`, `ExcludeFromSim.ts`, `Dnp.ts`, `InBom.ts`, `OnBoard.ts`
+- [x] Delete/archive:
+  - [x] `Paper.ts`, `TitleBlock.ts` (schematic-specific)
+  - [x] `Property.ts`, `PropertyUnlocked.ts`, `PropertyHide.ts` (KiCad-specific)
+  - [x] `Sheet.ts`, `SheetPin.ts`, etc. (schematic-specific)
+  - [x] `Symbol.ts`, `LibSymbols.ts` (schematic-specific)
+  - [x] `Bus.ts`, `BusEntry.ts`, `Junction.ts`, `NoConnect.ts`, `Label.ts`, `GlobalLabel.ts` (schematic-specific)
+  - [x] `SchematicText.ts`
+  - [x] `Setup.ts` and Setup/ directory (KiCad PCB setup - different in DSN)
+  - [x] `PcbGeneral.ts`, `PcbGeneralThickness.ts`, etc.
+  - [x] `EmbeddedFonts.ts`, `FieldsAutoplaced.ts`, `ExcludeFromSim.ts`, `Dnp.ts`, `InBom.ts`, `OnBoard.ts`
 
 ## Phase 8: Parsing Infrastructure
 
@@ -218,24 +218,26 @@ The current architecture uses:
   - [ ] Keep `preload.ts`
 
 ### 10.2 Create DSN Tests
-- [ ] Create `tests/sexpr/SpectraDsnDemos.test.ts`:
-  - [ ] Download sample DSN files
-  - [ ] Test round-trip parsing (parse → stringify → parse)
-  - [ ] Follow pattern from `KicadPcbDemos.test.ts`
+- [x] Create `tests/sexpr/SpectraDsnDemos.test.ts`:
+  - [x] Download sample DSN files
+  - [x] Test round-trip parsing (parse → stringify → parse)
+  - [x] Follow pattern from `KicadPcbDemos.test.ts`
 - [ ] Create `tests/sexpr/SpectraSesDemos.test.ts`:
   - [ ] Test SES file round-tripping
-- [ ] Create unit tests for major DSN classes:
-  - [ ] `tests/sexpr/classes/SpectraDsn.test.ts`
-  - [ ] `tests/sexpr/classes/Structure.test.ts`
+- [x] Create unit tests for major DSN classes:
+  - [x] `tests/sexpr/classes/SpectraDsn.test.ts`
+  - [x] `tests/sexpr/classes/SpectraSes.test.ts`
+  - [x] `tests/sexpr/SpectraDsnStructure.test.ts`
+  - [x] `tests/sexpr/DsnTypeSafety.test.ts`
   - [ ] `tests/sexpr/classes/Network.test.ts`
   - [ ] `tests/sexpr/classes/Library.test.ts`
   - [ ] `tests/sexpr/classes/Wiring.test.ts`
 
 ### 10.3 Remove KiCad Tests
-- [ ] Delete:
-  - [ ] `KicadSchDemos.test.ts`
-  - [ ] `KicadPcbDemos.test.ts`
-  - [ ] All `tests/sexpr/classes/` tests for removed classes
+- [x] Delete:
+  - [x] `KicadSchDemos.test.ts`
+  - [x] `KicadPcbDemos.test.ts`
+  - [x] All `tests/sexpr/classes/` tests for removed classes (Footprint, FpArc, FpCircle, GlobalLabel, Image, KicadSch, Paper, Property, Setup, Sheet, Symbol, TitleBlock, etc.)
 
 ## Phase 11: Documentation & Examples
 
