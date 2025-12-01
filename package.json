@@ -27,5 +27,9 @@
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "dependencies": {
+    "bun-match-svg": "^0.0.14",
+    "svgson": "^5.3.1"
   }
 }
