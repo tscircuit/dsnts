@@ -128,10 +128,3 @@ export class DsnLayer extends SxClass {
 
 // Register for structure parent (DSN files)
 SxClass.register(DsnLayer)
-
-// Also register as default to handle parsing without parent context
-SxClass.register(
-  class extends DsnLayer {
-    static override parentToken = undefined
-  },
-)

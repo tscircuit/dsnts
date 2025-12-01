@@ -1,23 +1,36 @@
-import { DsnLayer, SxClass } from "lib/sexpr"
+import { DsnLayer, SpectraDsn, SxClass } from "lib/sexpr"
 import { expect, test } from "bun:test"
 
 test("DsnLayer with type and property", () => {
-  const [layer] = SxClass.parse(
-    `(layer F.Cu
-      (type signal)
-      (property
-        (index 0)
+  // Parse within a DSN file context to use DsnLayer instead of Layer
+  const [dsn] = SxClass.parse(
+    `(pcb test
+      (structure
+        (layer F.Cu
+          (type signal)
+          (property
+            (index 0)
+          )
+        )
       )
     )`,
   )
 
-  expect(layer).toBeInstanceOf(DsnLayer)
-  const dsnLayer = layer as DsnLayer
-  expect(dsnLayer.layerName).toBe("F.Cu")
-  expect(dsnLayer.type).toBe("signal")
-  expect(dsnLayer.index).toBe(0)
+  expect(dsn).toBeInstanceOf(SpectraDsn)
+  const spectraDsn = dsn as SpectraDsn
+  const structure = spectraDsn.structure
+  expect(structure).toBeDefined()
 
-  expect(dsnLayer.getString()).toMatchInlineSnapshot(`
+  const layers = structure!.layers
+  expect(layers).toHaveLength(1)
+
+  const layer = layers[0]!
+  expect(layer).toBeInstanceOf(DsnLayer)
+  expect(layer.layerName).toBe("F.Cu")
+  expect(layer.type).toBe("signal")
+  expect(layer.index).toBe(0)
+
+  expect(layer.getString()).toMatchInlineSnapshot(`
     "(layer F.Cu
       (type signal)
       (property
@@ -49,19 +62,24 @@ test("DsnLayer construction via constructor", () => {
 })
 
 test("DsnLayer with different index", () => {
-  const [layer] = SxClass.parse(
-    `(layer B.Cu
-      (type signal)
-      (property
-        (index 1)
+  const [dsn] = SxClass.parse(
+    `(pcb test
+      (structure
+        (layer B.Cu
+          (type signal)
+          (property
+            (index 1)
+          )
+        )
       )
     )`,
   )
 
-  const dsnLayer = layer as DsnLayer
-  expect(dsnLayer.layerName).toBe("B.Cu")
-  expect(dsnLayer.type).toBe("signal")
-  expect(dsnLayer.index).toBe(1)
+  const spectraDsn = dsn as SpectraDsn
+  const layer = spectraDsn.structure!.layers[0]!
+  expect(layer.layerName).toBe("B.Cu")
+  expect(layer.type).toBe("signal")
+  expect(layer.index).toBe(1)
 })
 
 test("DsnLayer with minimal properties", () => {
