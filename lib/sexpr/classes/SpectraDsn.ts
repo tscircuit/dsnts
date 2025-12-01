@@ -83,10 +83,7 @@ export class SpectraDsn extends SxClass {
     const dsn = new SpectraDsn()
 
     // First primitive is typically the design name (string after "pcb")
-    if (
-      primitiveSexprs.length > 0 &&
-      typeof primitiveSexprs[0] === "string"
-    ) {
+    if (primitiveSexprs.length > 0 && typeof primitiveSexprs[0] === "string") {
       dsn.designName = primitiveSexprs[0]
     }
 

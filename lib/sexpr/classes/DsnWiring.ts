@@ -135,4 +135,3 @@ export class DsnWiring extends SxClass {
 }
 
 SxClass.register(DsnWiring)
-

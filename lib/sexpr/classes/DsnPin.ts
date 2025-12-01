@@ -37,8 +37,12 @@ export class DsnPin extends SxClass {
     primitiveSexprs: PrimitiveSExpr[],
   ): DsnPin {
     const pin = new DsnPin()
-    const strings = primitiveSexprs.filter((p) => typeof p === "string") as string[]
-    const numbers = primitiveSexprs.filter((p) => typeof p === "number") as number[]
+    const strings = primitiveSexprs.filter(
+      (p) => typeof p === "string",
+    ) as string[]
+    const numbers = primitiveSexprs.filter(
+      (p) => typeof p === "number",
+    ) as number[]
     if (strings[0]) pin._padstackId = strings[0]
     if (strings[1]) pin._pinId = strings[1]
     if (numbers[0] !== undefined) pin._x = numbers[0]

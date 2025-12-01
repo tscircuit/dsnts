@@ -67,7 +67,7 @@ export function tokenize(input: string): Token[] {
       const nextChar = nextIdx < input.length ? input[nextIdx] : undefined
 
       // If the next character is ) or whitespace, treat the quote as a symbol
-      if (nextChar === ')' || (nextChar && isWhitespace(nextChar))) {
+      if (nextChar === ")" || (nextChar && isWhitespace(nextChar))) {
         tokens.push({ type: "symbol", value: '"' })
         i++
         continue
