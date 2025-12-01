@@ -43,7 +43,9 @@ export class DsnRect extends SxClass {
     const stringPrim = primitiveSexprs.find((p) => typeof p === "string")
     if (stringPrim) rect._layer = stringPrim as string
 
-    const numbers = primitiveSexprs.filter((p) => typeof p === "number") as number[]
+    const numbers = primitiveSexprs.filter(
+      (p) => typeof p === "number",
+    ) as number[]
     if (numbers.length >= 4) {
       rect._x1 = numbers[0]
       rect._y1 = numbers[1]

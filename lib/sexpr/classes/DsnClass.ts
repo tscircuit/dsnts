@@ -45,10 +45,7 @@ export class DsnClass extends SxClass {
     const dsnClass = new DsnClass()
 
     // First primitive is the class name
-    if (
-      primitiveSexprs.length > 0 &&
-      typeof primitiveSexprs[0] === "string"
-    ) {
+    if (primitiveSexprs.length > 0 && typeof primitiveSexprs[0] === "string") {
       dsnClass.className = primitiveSexprs[0]
     }
 

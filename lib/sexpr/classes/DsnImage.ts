@@ -49,10 +49,7 @@ export class DsnImage extends SxClass {
     const image = new DsnImage()
 
     // First primitive is the image ID
-    if (
-      primitiveSexprs.length > 0 &&
-      typeof primitiveSexprs[0] === "string"
-    ) {
+    if (primitiveSexprs.length > 0 && typeof primitiveSexprs[0] === "string") {
       image.imageId = primitiveSexprs[0]
     }
 

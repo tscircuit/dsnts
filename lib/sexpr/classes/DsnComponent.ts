@@ -42,10 +42,7 @@ export class DsnComponent extends SxClass {
     const component = new DsnComponent()
 
     // First primitive is the image ID
-    if (
-      primitiveSexprs.length > 0 &&
-      typeof primitiveSexprs[0] === "string"
-    ) {
+    if (primitiveSexprs.length > 0 && typeof primitiveSexprs[0] === "string") {
       component.imageId = primitiveSexprs[0]
     }
 

@@ -26,7 +26,8 @@ export class DsnPlace extends SxClass {
 
   constructor(params: DsnPlaceConstructorParams = {}) {
     super()
-    if (params.componentRef !== undefined) this.componentRef = params.componentRef
+    if (params.componentRef !== undefined)
+      this.componentRef = params.componentRef
     if (params.x !== undefined) this.x = params.x
     if (params.y !== undefined) this.y = params.y
     if (params.side !== undefined) this.side = params.side
@@ -37,8 +38,12 @@ export class DsnPlace extends SxClass {
     primitiveSexprs: PrimitiveSExpr[],
   ): DsnPlace {
     const place = new DsnPlace()
-    const strings = primitiveSexprs.filter((p) => typeof p === "string") as string[]
-    const numbers = primitiveSexprs.filter((p) => typeof p === "number") as number[]
+    const strings = primitiveSexprs.filter(
+      (p) => typeof p === "string",
+    ) as string[]
+    const numbers = primitiveSexprs.filter(
+      (p) => typeof p === "number",
+    ) as number[]
     if (strings[0]) place._componentRef = strings[0]
     if (strings[1]) place._side = strings[1]
     if (numbers[0] !== undefined) place._x = numbers[0]

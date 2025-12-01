@@ -42,10 +42,7 @@ export class DsnNet extends SxClass {
     const net = new DsnNet()
 
     // First primitive is the net name
-    if (
-      primitiveSexprs.length > 0 &&
-      typeof primitiveSexprs[0] === "string"
-    ) {
+    if (primitiveSexprs.length > 0 && typeof primitiveSexprs[0] === "string") {
       net.netName = primitiveSexprs[0]
     }
 
