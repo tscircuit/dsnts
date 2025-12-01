@@ -43,10 +43,7 @@ export class DsnPadstack extends SxClass {
     const padstack = new DsnPadstack()
 
     // First primitive is the padstack ID
-    if (
-      primitiveSexprs.length > 0 &&
-      typeof primitiveSexprs[0] === "string"
-    ) {
+    if (primitiveSexprs.length > 0 && typeof primitiveSexprs[0] === "string") {
       padstack.padstackId = primitiveSexprs[0]
     }
 

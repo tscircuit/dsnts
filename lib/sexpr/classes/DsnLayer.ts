@@ -32,7 +32,9 @@ export class DsnLayer extends SxClass {
     primitiveSexprs: PrimitiveSExpr[],
   ): DsnLayer {
     const layer = new DsnLayer()
-    const strings = primitiveSexprs.filter((p) => typeof p === "string") as string[]
+    const strings = primitiveSexprs.filter(
+      (p) => typeof p === "string",
+    ) as string[]
     if (strings[0]) layer._layerName = strings[0]
     if (strings[1]) layer._type = strings[1]
     if (strings[2]) layer._direction = strings[2]

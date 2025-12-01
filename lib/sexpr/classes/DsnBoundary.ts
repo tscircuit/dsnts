@@ -1,6 +1,8 @@
 import { SxClass } from "../base-classes/SxClass"
 import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
+import { DsnCircle } from "./DsnCircle"
 import { DsnPath } from "./DsnPath"
+import { DsnPolygon } from "./DsnPolygon"
 import { DsnRect } from "./DsnRect"
 
 /**
@@ -12,8 +14,8 @@ import { DsnRect } from "./DsnRect"
 export interface DsnBoundaryConstructorParams {
   paths?: DsnPath[]
   rects?: DsnRect[]
-  polygons?: SxClass[] // TODO: Create DsnPolygon class
-  circles?: SxClass[] // TODO: Create DsnCircle class
+  polygons?: DsnPolygon[]
+  circles?: DsnCircle[]
   otherChildren?: SxClass[]
 }
 
@@ -24,8 +26,8 @@ export class DsnBoundary extends SxClass {
 
   private _paths: DsnPath[] = []
   private _rects: DsnRect[] = []
-  private _polygons: SxClass[] = []
-  private _circles: SxClass[] = []
+  private _polygons: DsnPolygon[] = []
+  private _circles: DsnCircle[] = []
   private _otherChildren: SxClass[] = []
 
   constructor(params: DsnBoundaryConstructorParams = {}) {
@@ -67,7 +69,14 @@ export class DsnBoundary extends SxClass {
       this._rects.push(child)
       return
     }
-    // TODO: Add DsnPolygon and DsnCircle when implemented
+    if (child instanceof DsnPolygon) {
+      this._polygons.push(child)
+      return
+    }
+    if (child instanceof DsnCircle) {
+      this._circles.push(child)
+      return
+    }
 
     this._otherChildren.push(child)
   }
@@ -88,19 +97,19 @@ export class DsnBoundary extends SxClass {
     this._rects = [...value]
   }
 
-  get polygons(): SxClass[] {
+  get polygons(): DsnPolygon[] {
     return [...this._polygons]
   }
 
-  set polygons(value: SxClass[]) {
+  set polygons(value: DsnPolygon[]) {
     this._polygons = [...value]
   }
 
-  get circles(): SxClass[] {
+  get circles(): DsnCircle[] {
     return [...this._circles]
   }
 
-  set circles(value: SxClass[]) {
+  set circles(value: DsnCircle[]) {
     this._circles = [...value]
   }
 

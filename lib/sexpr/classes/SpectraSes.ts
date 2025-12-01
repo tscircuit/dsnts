@@ -45,10 +45,7 @@ export class SpectraSes extends SxClass {
     const ses = new SpectraSes()
 
     // First primitive is typically the session name (string after "session")
-    if (
-      primitiveSexprs.length > 0 &&
-      typeof primitiveSexprs[0] === "string"
-    ) {
+    if (primitiveSexprs.length > 0 && typeof primitiveSexprs[0] === "string") {
       ses.sessionName = primitiveSexprs[0]
     }
 

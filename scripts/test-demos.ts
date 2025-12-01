@@ -37,7 +37,9 @@ async function testDemoFile(filename: string): Promise<void> {
     console.log("\nStatus: SUCCESS")
   } catch (error) {
     console.error(`\nStatus: FAILED`)
-    console.error(`Error: ${error instanceof Error ? error.message : String(error)}`)
+    console.error(
+      `Error: ${error instanceof Error ? error.message : String(error)}`,
+    )
     if (error instanceof Error && error.stack) {
       console.error(`\nStack trace (first 5 lines):`)
       const stackLines = error.stack.split("\n").slice(0, 5)

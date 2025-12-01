@@ -45,7 +45,9 @@ export class DsnCircle extends SxClass {
     }
 
     // Parse numbers: diameter, x, y
-    const numbers = primitiveSexprs.filter((p) => typeof p === "number") as number[]
+    const numbers = primitiveSexprs.filter(
+      (p) => typeof p === "number",
+    ) as number[]
     if (numbers.length > 0) circle._diameter = numbers[0]
     if (numbers.length > 1) circle._x = numbers[1]
     if (numbers.length > 2) circle._y = numbers[2]
