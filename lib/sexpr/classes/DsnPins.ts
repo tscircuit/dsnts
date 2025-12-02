@@ -53,13 +53,12 @@ export class DsnPins extends SxClass {
       return `(${this.token})`
     }
 
-    const parts = [`(${this.token}`]
+    const parts = [this.token]
     for (const ref of this._pinRefs) {
-      parts.push(JSON.stringify(ref))
+      parts.push(ref)
     }
-    parts.push(")")
 
-    return parts.join(" ")
+    return `(${parts.join(" ")})`
   }
 }
 
