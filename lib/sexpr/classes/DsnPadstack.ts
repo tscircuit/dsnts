@@ -106,10 +106,17 @@ export class DsnPadstack extends SxClass {
 
   override getString(): string {
     const children = this.getChildren()
+
+    if (children.length === 0) {
+      return this._padstackId
+        ? `(${this.token} ${this._padstackId})`
+        : `(${this.token})`
+    }
+
     const lines = [`(${this.token}`]
 
     if (this._padstackId) {
-      lines.push(`  ${JSON.stringify(this._padstackId)}`)
+      lines.push(`  ${this._padstackId}`)
     }
 
     for (const child of children) {
