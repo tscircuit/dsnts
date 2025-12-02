@@ -92,14 +92,13 @@ export class DsnPin extends SxClass {
   }
 
   override getString(): string {
-    const parts = [`(${this.token}`]
-    if (this._padstackId) parts.push(JSON.stringify(this._padstackId))
-    if (this._pinId) parts.push(JSON.stringify(this._pinId))
+    const parts = [this.token]
+    if (this._padstackId) parts.push(this._padstackId)
+    if (this._pinId) parts.push(this._pinId)
     if (this._x !== undefined) parts.push(String(this._x))
     if (this._y !== undefined) parts.push(String(this._y))
     if (this._rotation !== undefined) parts.push(String(this._rotation))
-    parts.push(")")
-    return parts.join(" ")
+    return `(${parts.join(" ")})`
   }
 }
 
