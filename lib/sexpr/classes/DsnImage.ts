@@ -125,10 +125,17 @@ export class DsnImage extends SxClass {
 
   override getString(): string {
     const children = this.getChildren()
+
+    if (children.length === 0) {
+      return this._imageId
+        ? `(${this.token} ${this._imageId})`
+        : `(${this.token})`
+    }
+
     const lines = [`(${this.token}`]
 
     if (this._imageId) {
-      lines.push(`  ${JSON.stringify(this._imageId)}`)
+      lines.push(`  ${this._imageId}`)
     }
 
     for (const child of children) {
