@@ -98,10 +98,13 @@ export class DsnNet extends SxClass {
 
   override getString(): string {
     const children = this.getChildren()
-    const lines = [`(${this.token}`]
+    const lines: string[] = []
 
+    // Start with token and net name on the same line
     if (this._netName) {
-      lines.push(`  ${JSON.stringify(this._netName)}`)
+      lines.push(`(${this.token} ${JSON.stringify(this._netName)}`)
+    } else {
+      lines.push(`(${this.token}`)
     }
 
     // Add pin references
