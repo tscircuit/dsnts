@@ -10,7 +10,7 @@ import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
  * Example: (circ signal 115.433071 0.000000 86.614173)
  */
 export interface DsnCircleConstructorParams {
-  layer?: string
+  layer?: string | number
   diameter?: number
   x?: number
   y?: number
@@ -20,7 +20,7 @@ export class DsnCircle extends SxClass {
   static override token = "circle"
   token = "circle"
 
-  private _layer?: string
+  private _layer?: string | number
   private _diameter?: number
   private _x?: number
   private _y?: number
@@ -38,16 +38,18 @@ export class DsnCircle extends SxClass {
   ): DsnCircle {
     const circle = new DsnCircle()
 
-    // Parse layer (first string)
-    const layerIndex = primitiveSexprs.findIndex((p) => typeof p === "string")
-    if (layerIndex >= 0) {
-      circle._layer = primitiveSexprs[layerIndex] as string
+    // First element is layer (can be string or number)
+    if (primitiveSexprs.length > 0) {
+      const first = primitiveSexprs[0]
+      if (typeof first === "string" || typeof first === "number") {
+        circle._layer = first
+      }
     }
 
-    // Parse numbers: diameter, x, y
-    const numbers = primitiveSexprs.filter(
-      (p) => typeof p === "number",
-    ) as number[]
+    // Remaining numbers are diameter, x, y
+    const numbers = primitiveSexprs
+      .slice(1)
+      .filter((p) => typeof p === "number") as number[]
     if (numbers.length > 0) circle._diameter = numbers[0]
     if (numbers.length > 1) circle._x = numbers[1]
     if (numbers.length > 2) circle._y = numbers[2]
@@ -55,11 +57,11 @@ export class DsnCircle extends SxClass {
     return circle
   }
 
-  get layer(): string | undefined {
+  get layer(): string | number | undefined {
     return this._layer
   }
 
-  set layer(value: string | undefined) {
+  set layer(value: string | number | undefined) {
     this._layer = value
   }
 
@@ -90,7 +92,7 @@ export class DsnCircle extends SxClass {
   override getString(): string {
     const parts = [`(${this.token}`]
 
-    if (this._layer) parts.push(this._layer)
+    if (this._layer !== undefined) parts.push(String(this._layer))
     if (this._diameter !== undefined) parts.push(String(this._diameter))
     if (this._x !== undefined) parts.push(String(this._x))
     if (this._y !== undefined) parts.push(String(this._y))

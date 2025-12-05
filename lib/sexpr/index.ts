@@ -59,5 +59,19 @@ export * from "./classes/DsnVia"
 export * from "./classes/DsnWire"
 export * from "./classes/DsnWiring"
 
+// SES-specific classes
+export * from "./classes/SesBaseDesign"
+export * from "./classes/SesLibraryOut"
+export * from "./classes/SesNet"
+export * from "./classes/SesNetworkOut"
+export * from "./classes/SesPadstack"
+export * from "./classes/SesParser"
+export * from "./classes/SesPath"
+export * from "./classes/SesPlacement"
+export * from "./classes/SesRoutes"
+export * from "./classes/SesVia"
+export * from "./classes/SesWasIs"
+export * from "./classes/SesWire"
+
 // Parse functions
 export * from "./parseKicadSexpr"
