@@ -56,3 +56,17 @@ export class DsnResolution extends SxClass {
 }
 
 SxClass.register(DsnResolution)
+
+// Also register for placement parent (used in SES files)
+SxClass.register(
+  class DsnResolutionPlacement extends DsnResolution {
+    static override parentToken = "placement"
+  },
+)
+
+// Also register for routes parent (used in SES files)
+SxClass.register(
+  class DsnResolutionRoutes extends DsnResolution {
+    static override parentToken = "routes"
+  },
+)

@@ -1,5 +1,9 @@
 import { SxClass } from "../base-classes/SxClass"
 import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
+import { SesBaseDesign } from "./SesBaseDesign"
+import { SesPlacement } from "./SesPlacement"
+import { SesWasIs } from "./SesWasIs"
+import { SesRoutes } from "./SesRoutes"
 
 /**
  * SpectraSes represents the root of a Specctra SES (Session) file.
@@ -11,14 +15,18 @@ import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
  * - placement: Component placement results
  * - was_is: Design changes/modifications
  * - routes: Wire routes and via placements
- * - library_out: Modified library elements
- * - network_out: Modified network data
  */
 export interface SpectraSesConstructorParams {
   /** Session/design name */
   sessionName?: string
-  /** Base design file reference */
-  baseDesign?: string
+  /** Base design reference */
+  baseDesign?: SesBaseDesign
+  /** Placement information */
+  placement?: SesPlacement
+  /** Was/Is pin mapping changes */
+  wasIs?: SesWasIs
+  /** Routing results */
+  routes?: SesRoutes
   /** Other parsed children not yet implemented */
   otherChildren?: SxClass[]
 }
@@ -28,15 +36,21 @@ export class SpectraSes extends SxClass {
   token = "session"
 
   private _sessionName?: string
-  private _baseDesign?: string
+  private _sxBaseDesign?: SesBaseDesign
+  private _sxPlacement?: SesPlacement
+  private _sxWasIs?: SesWasIs
+  private _sxRoutes?: SesRoutes
   private _otherChildren: SxClass[] = []
 
   constructor(params: SpectraSesConstructorParams = {}) {
     super()
-    if (params.sessionName !== undefined) this.sessionName = params.sessionName
-    if (params.baseDesign !== undefined) this.baseDesign = params.baseDesign
+    if (params.sessionName !== undefined) this._sessionName = params.sessionName
+    if (params.baseDesign !== undefined) this._sxBaseDesign = params.baseDesign
+    if (params.placement !== undefined) this._sxPlacement = params.placement
+    if (params.wasIs !== undefined) this._sxWasIs = params.wasIs
+    if (params.routes !== undefined) this._sxRoutes = params.routes
     if (params.otherChildren !== undefined)
-      this.otherChildren = params.otherChildren
+      this._otherChildren = [...params.otherChildren]
   }
 
   static override fromSexprPrimitives(
@@ -46,7 +60,7 @@ export class SpectraSes extends SxClass {
 
     // First primitive is typically the session name (string after "session")
     if (primitiveSexprs.length > 0 && typeof primitiveSexprs[0] === "string") {
-      ses.sessionName = primitiveSexprs[0]
+      ses._sessionName = primitiveSexprs[0]
     }
 
     // Parse remaining children
@@ -72,10 +86,22 @@ export class SpectraSes extends SxClass {
   }
 
   private consumeChild(child: SxClass) {
-    // TODO: As we implement SES-specific classes (BaseDesign, Routes, etc.),
-    // add instanceof checks here
-    //
-    // For now, store all children as otherChildren
+    if (child instanceof SesBaseDesign) {
+      this._sxBaseDesign = child
+      return
+    }
+    if (child instanceof SesPlacement) {
+      this._sxPlacement = child
+      return
+    }
+    if (child instanceof SesWasIs) {
+      this._sxWasIs = child
+      return
+    }
+    if (child instanceof SesRoutes) {
+      this._sxRoutes = child
+      return
+    }
     this._otherChildren.push(child)
   }
 
@@ -87,12 +113,36 @@ export class SpectraSes extends SxClass {
     this._sessionName = value
   }
 
-  get baseDesign(): string | undefined {
-    return this._baseDesign
+  get baseDesign(): SesBaseDesign | undefined {
+    return this._sxBaseDesign
   }
 
-  set baseDesign(value: string | undefined) {
-    this._baseDesign = value
+  set baseDesign(value: SesBaseDesign | undefined) {
+    this._sxBaseDesign = value
+  }
+
+  get placement(): SesPlacement | undefined {
+    return this._sxPlacement
+  }
+
+  set placement(value: SesPlacement | undefined) {
+    this._sxPlacement = value
+  }
+
+  get wasIs(): SesWasIs | undefined {
+    return this._sxWasIs
+  }
+
+  set wasIs(value: SesWasIs | undefined) {
+    this._sxWasIs = value
+  }
+
+  get routes(): SesRoutes | undefined {
+    return this._sxRoutes
+  }
+
+  set routes(value: SesRoutes | undefined) {
+    this._sxRoutes = value
   }
 
   get otherChildren(): SxClass[] {
@@ -106,14 +156,10 @@ export class SpectraSes extends SxClass {
   override getChildren(): SxClass[] {
     const children: SxClass[] = []
 
-    // Session name is output as a string primitive, not an SxClass
-    // It will be handled specially in getString()
-
-    // TODO: Add specific SES children here as they're implemented
-    // if (this._sxBaseDesign) children.push(this._sxBaseDesign)
-    // if (this._sxRoutes) children.push(this._sxRoutes)
-    // etc.
-
+    if (this._sxBaseDesign) children.push(this._sxBaseDesign)
+    if (this._sxPlacement) children.push(this._sxPlacement)
+    if (this._sxWasIs) children.push(this._sxWasIs)
+    if (this._sxRoutes) children.push(this._sxRoutes)
     children.push(...this._otherChildren)
     return children
   }
