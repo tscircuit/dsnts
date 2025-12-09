@@ -61,6 +61,8 @@ export * from "./classes/DsnWiring"
 
 // SES-specific classes
 export * from "./classes/SesBaseDesign"
+export * from "./classes/SesHostCad"
+export * from "./classes/SesHostVersion"
 export * from "./classes/SesLibraryOut"
 export * from "./classes/SesNet"
 export * from "./classes/SesNetworkOut"
