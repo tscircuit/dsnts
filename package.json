@@ -1,7 +1,7 @@
 {
   "name": "dsnts",
   "main": "dist/index.js",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "type": "module",
   "description": "TypeScript-first toolkit for reading, editing, and generating Specctra DSN S-expression documents",
   "repository": {
