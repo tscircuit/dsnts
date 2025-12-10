@@ -37,17 +37,34 @@ export class DsnPin extends SxClass {
     primitiveSexprs: PrimitiveSExpr[],
   ): DsnPin {
     const pin = new DsnPin()
-    const strings = primitiveSexprs.filter(
-      (p) => typeof p === "string",
-    ) as string[]
-    const numbers = primitiveSexprs.filter(
-      (p) => typeof p === "number",
-    ) as number[]
-    if (strings[0]) pin._padstackId = strings[0]
-    if (strings[1]) pin._pinId = strings[1]
-    if (numbers[0] !== undefined) pin._x = numbers[0]
-    if (numbers[1] !== undefined) pin._y = numbers[1]
-    if (numbers[2] !== undefined) pin._rotation = numbers[2]
+    // DSN format: (pin <padstack_id> [(rotate <angle>)] <pin_id> <x> <y> [rotation])
+    // Parse positionally - pin_id can be a number or string
+    // Filter to only strings and numbers (skip nested arrays like (rotate ...))
+    const primitives = primitiveSexprs.filter(
+      (p) => typeof p === "string" || typeof p === "number",
+    ) as (string | number)[]
+
+    // Check for inline (rotate ...) expression and extract rotation from it
+    const rotateExpr = primitiveSexprs.find(
+      (p) => Array.isArray(p) && p[0] === "rotate",
+    ) as PrimitiveSExpr[] | undefined
+    if (rotateExpr && typeof rotateExpr[1] === "number") {
+      pin._rotation = rotateExpr[1]
+    }
+
+    if (primitives[0] !== undefined) pin._padstackId = String(primitives[0])
+    if (primitives[1] !== undefined) pin._pinId = String(primitives[1])
+    if (primitives[2] !== undefined && typeof primitives[2] === "number")
+      pin._x = primitives[2]
+    if (primitives[3] !== undefined && typeof primitives[3] === "number")
+      pin._y = primitives[3]
+    // Only set rotation from primitives if not already set from (rotate ...) expression
+    if (
+      pin._rotation === undefined &&
+      primitives[4] !== undefined &&
+      typeof primitives[4] === "number"
+    )
+      pin._rotation = primitives[4]
     return pin
   }
 
