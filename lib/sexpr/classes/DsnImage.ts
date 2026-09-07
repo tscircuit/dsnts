@@ -1,3 +1,4 @@
+import { formatDsnIdentifier } from "../utils/formatDsnIdentifier"
 import { SxClass } from "../base-classes/SxClass"
 import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
 import { DsnOutline } from "./DsnOutline"
@@ -128,14 +129,14 @@ export class DsnImage extends SxClass {
 
     if (children.length === 0) {
       return this._imageId
-        ? `(${this.token} ${this._imageId})`
+        ? `(${this.token} ${formatDsnIdentifier(this._imageId)})`
         : `(${this.token})`
     }
 
     const lines = [`(${this.token}`]
 
     if (this._imageId) {
-      lines.push(`  ${this._imageId}`)
+      lines.push(`  ${formatDsnIdentifier(this._imageId)}`)
     }
 
     for (const child of children) {

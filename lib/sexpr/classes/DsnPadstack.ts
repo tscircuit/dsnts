@@ -1,3 +1,4 @@
+import { formatDsnIdentifier } from "../utils/formatDsnIdentifier"
 import { SxClass } from "../base-classes/SxClass"
 import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
 import { DsnShape } from "./DsnShape"
@@ -109,14 +110,14 @@ export class DsnPadstack extends SxClass {
 
     if (children.length === 0) {
       return this._padstackId
-        ? `(${this.token} ${this._padstackId})`
+        ? `(${this.token} ${formatDsnIdentifier(this._padstackId)})`
         : `(${this.token})`
     }
 
     const lines = [`(${this.token}`]
 
     if (this._padstackId) {
-      lines.push(`  ${this._padstackId}`)
+      lines.push(`  ${formatDsnIdentifier(this._padstackId)}`)
     }
 
     for (const child of children) {

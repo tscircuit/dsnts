@@ -1,3 +1,4 @@
+import { formatDsnIdentifier } from "../utils/formatDsnIdentifier"
 import { SxClass } from "../base-classes/SxClass"
 import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
 
@@ -110,8 +111,8 @@ export class DsnPin extends SxClass {
 
   override getString(): string {
     const parts = [this.token]
-    if (this._padstackId) parts.push(this._padstackId)
-    if (this._pinId) parts.push(this._pinId)
+    if (this._padstackId) parts.push(formatDsnIdentifier(this._padstackId))
+    if (this._pinId) parts.push(formatDsnIdentifier(this._pinId))
     if (this._x !== undefined) parts.push(String(this._x))
     if (this._y !== undefined) parts.push(String(this._y))
     if (this._rotation !== undefined) parts.push(String(this._rotation))

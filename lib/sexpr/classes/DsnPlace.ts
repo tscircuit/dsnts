@@ -1,3 +1,4 @@
+import { formatDsnIdentifier } from "../utils/formatDsnIdentifier"
 import { SxClass } from "../base-classes/SxClass"
 import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
 
@@ -94,7 +95,7 @@ export class DsnPlace extends SxClass {
 
   override getString(): string {
     const parts = [`(${this.token}`]
-    if (this._componentRef) parts.push(this._componentRef)
+    if (this._componentRef) parts.push(formatDsnIdentifier(this._componentRef))
     if (this._x !== undefined) parts.push(String(this._x))
     if (this._y !== undefined) parts.push(String(this._y))
     if (this._side) parts.push(this._side)
