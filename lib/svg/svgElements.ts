@@ -13,7 +13,11 @@ const createPolyline = (
   options: GenerateSvgOptions,
 ): SvgChildNode => {
   const strokeColor = options.strokeColor ?? DEFAULT_STROKE
-  const strokeWidth = shape.width ?? options.strokeWidth ?? DEFAULT_STROKE_WIDTH
+  // DSN board boundaries commonly have no physical width, but need an outline.
+  const strokeWidth =
+    shape.width !== undefined && shape.width > 0
+      ? shape.width
+      : (options.strokeWidth ?? DEFAULT_STROKE_WIDTH)
   const points = shape.points.map((point) => `${point.x},${point.y}`).join(" ")
 
   return {
