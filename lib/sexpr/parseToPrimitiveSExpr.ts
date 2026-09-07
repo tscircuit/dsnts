@@ -61,13 +61,20 @@ export function tokenize(input: string): Token[] {
 
     // String literal or bare quote symbol (DSN-specific)
     if (current === '"') {
-      // Peek ahead to check if this is a lone quote symbol
-      // In DSN files, (string_quote ") has the quote as a symbol, not a string
+      // Only DSN's (string_quote ") declaration uses a bare quote symbol.
+      // Ordinary quoted strings may start with whitespace or a parenthesis.
       const nextIdx = i + 1
       const nextChar = nextIdx < input.length ? input[nextIdx] : undefined
+      const previousToken = tokens.at(-1)
+      const isStringQuoteDeclaration =
+        tokens.at(-2)?.type === "lparen" &&
+        previousToken?.type === "symbol" &&
+        previousToken.value.toLowerCase() === "string_quote"
 
-      // If the next character is ) or whitespace, treat the quote as a symbol
-      if (nextChar === ")" || (nextChar && isWhitespace(nextChar))) {
+      if (
+        isStringQuoteDeclaration &&
+        (nextChar === ")" || (nextChar && isWhitespace(nextChar)))
+      ) {
         tokens.push({ type: "symbol", value: '"' })
         i++
         continue
