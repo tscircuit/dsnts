@@ -38,17 +38,14 @@ export class DsnPlace extends SxClass {
     primitiveSexprs: PrimitiveSExpr[],
   ): DsnPlace {
     const place = new DsnPlace()
-    const strings = primitiveSexprs.filter(
-      (p) => typeof p === "string",
-    ) as string[]
-    const numbers = primitiveSexprs.filter(
-      (p) => typeof p === "number",
-    ) as number[]
-    if (strings[0]) place._componentRef = strings[0]
-    if (strings[1]) place._side = strings[1]
-    if (numbers[0] !== undefined) place._x = numbers[0]
-    if (numbers[1] !== undefined) place._y = numbers[1]
-    if (numbers[2] !== undefined) place._rotation = numbers[2]
+    const [componentRef, x, y, side, rotation] = primitiveSexprs
+    if (typeof componentRef === "string" || typeof componentRef === "number") {
+      place._componentRef = String(componentRef)
+    }
+    if (typeof x === "number") place._x = x
+    if (typeof y === "number") place._y = y
+    if (typeof side === "string") place._side = side
+    if (typeof rotation === "number") place._rotation = rotation
     return place
   }
 
