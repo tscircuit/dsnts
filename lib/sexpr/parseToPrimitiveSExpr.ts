@@ -44,7 +44,7 @@ export function tokenize(input: string): Token[] {
 
     // Comments ;...<EOL>
     if (current === ";") {
-      while (i < input.length && input[i] !== "\n") i++
+      while (i < input.length && input[i] !== "\n" && input[i] !== "\r") i++
       continue
     }
 
