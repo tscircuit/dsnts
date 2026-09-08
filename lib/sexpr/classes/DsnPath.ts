@@ -1,5 +1,6 @@
 import { SxClass } from "../base-classes/SxClass"
 import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
+import { quoteNumericLayerName } from "../utils/quoteNumericLayerName"
 
 /**
  * DsnPath represents a (path ...) shape descriptor.
@@ -84,7 +85,7 @@ export class DsnPath extends SxClass {
     const parts = [`(${this.token}`]
 
     if (this._layer) {
-      parts.push(this._layer)
+      parts.push(quoteNumericLayerName(this._layer))
     }
     if (this._width !== undefined) {
       parts.push(String(this._width))

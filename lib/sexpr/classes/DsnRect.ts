@@ -1,5 +1,6 @@
 import { SxClass } from "../base-classes/SxClass"
 import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
+import { quoteNumericLayerName } from "../utils/quoteNumericLayerName"
 
 /**
  * DsnRect represents a (rect ...) shape descriptor.
@@ -98,7 +99,7 @@ export class DsnRect extends SxClass {
 
   override getString(): string {
     const parts = [`(${this.token}`]
-    if (this._layer) parts.push(this._layer)
+    if (this._layer) parts.push(quoteNumericLayerName(this._layer))
     if (this._x1 !== undefined) parts.push(String(this._x1))
     if (this._y1 !== undefined) parts.push(String(this._y1))
     if (this._x2 !== undefined) parts.push(String(this._x2))
