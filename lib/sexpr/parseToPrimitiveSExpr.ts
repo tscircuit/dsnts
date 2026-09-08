@@ -76,9 +76,13 @@ export function tokenize(input: string): Token[] {
       // Otherwise, it's a string literal
       i++ // skip opening quote
       let out = ""
+      let closed = false
       while (i < input.length) {
         const c = advance()
-        if (c === '"') break
+        if (c === '"') {
+          closed = true
+          break
+        }
         if (c === "\\") {
           if (i >= input.length)
             throw new SyntaxError("Unterminated escape in string")
@@ -107,8 +111,7 @@ export function tokenize(input: string): Token[] {
           out += c
         }
       }
-      if (input[i - 1] !== '"')
-        throw new SyntaxError("Unterminated string literal")
+      if (!closed) throw new SyntaxError("Unterminated string literal")
       tokens.push({ type: "string", value: out })
       continue
     }
