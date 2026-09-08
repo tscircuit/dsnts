@@ -226,7 +226,14 @@ export function printSExpr(x: PrimitiveSExpr): string {
   if (typeof x === "number") return Number.isFinite(x) ? String(x) : "nan"
   if (typeof x === "string") {
     // naive: treat as symbol if it looks like a symbol; otherwise quote
-    if (/^[^\s()"]+$/u.test(x) && x !== "nil" && x !== "#t" && x !== "#f")
+    if (
+      /^[^\s()"]+$/u.test(x) &&
+      !/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/u.test(x) &&
+      !x.startsWith(";") &&
+      x !== "nil" &&
+      x !== "#t" &&
+      x !== "#f"
+    )
       return x
     return `"${x.replace(/["\\\n\r\t]/g, (m) =>
       m === '"'
