@@ -94,8 +94,9 @@ export class DsnCircle extends SxClass {
 
     if (this._layer !== undefined) parts.push(String(this._layer))
     if (this._diameter !== undefined) parts.push(String(this._diameter))
-    if (this._x !== undefined) parts.push(String(this._x))
-    if (this._y !== undefined) parts.push(String(this._y))
+    if (this._x !== undefined || this._y !== undefined) {
+      parts.push(String(this._x ?? 0), String(this._y ?? 0))
+    }
 
     parts.push(")")
     return parts.join(" ")
