@@ -158,7 +158,7 @@ export abstract class SxClass {
       const sxClass = SxClass.parsePrimitiveSexpr(primitiveSexpr, {
         parentToken,
       }) as SxClass
-      if (!sxClass.isSxClass) continue
+      if (!sxClass?.isSxClass) continue
       propertyMap[sxClass.token] = sxClass
       arrayPropertyMap[sxClass.token] ??= []
       arrayPropertyMap[sxClass.token]!.push(sxClass)
