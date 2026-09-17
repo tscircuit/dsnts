@@ -2,18 +2,20 @@ import { SxClass } from "../base-classes/SxClass"
 import type { PrimitiveSExpr } from "../parseToPrimitiveSExpr"
 import { DsnPath } from "./DsnPath"
 import { DsnRect } from "./DsnRect"
+import { DsnPolygon } from "./DsnPolygon"
+import { DsnCircle } from "./DsnCircle"
 
 /**
  * DsnBoundary represents the (boundary ...) token in DSN structure section.
- * Defines the board outline/boundary using paths or rectangles.
+ * Defines the board outline/boundary using paths, rectangles, polygons, or circles.
  * Format: (boundary <path_descriptor>)
  * Example: (boundary (path pcb 0 100 100 0 0))
  */
 export interface DsnBoundaryConstructorParams {
   paths?: DsnPath[]
   rects?: DsnRect[]
-  polygons?: SxClass[] // TODO: Create DsnPolygon class
-  circles?: SxClass[] // TODO: Create DsnCircle class
+  polygons?: SxClass[]
+  circles?: SxClass[]
   otherChildren?: SxClass[]
 }
 
@@ -67,7 +69,14 @@ export class DsnBoundary extends SxClass {
       this._rects.push(child)
       return
     }
-    // TODO: Add DsnPolygon and DsnCircle when implemented
+    if (child instanceof DsnPolygon) {
+      this._polygons.push(child)
+      return
+    }
+    if (child instanceof DsnCircle) {
+      this._circles.push(child)
+      return
+    }
 
     this._otherChildren.push(child)
   }
