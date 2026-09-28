@@ -40,12 +40,16 @@ export class DsnRect extends SxClass {
   ): DsnRect {
     const rect = new DsnRect()
 
-    const stringPrim = primitiveSexprs.find((p) => typeof p === "string")
-    if (stringPrim) rect._layer = stringPrim as string
+    // Parse positionally - the layer name can be a number or string
+    const primitives = primitiveSexprs.filter(
+      (p) => typeof p === "string" || typeof p === "number",
+    ) as (string | number)[]
 
-    const numbers = primitiveSexprs.filter(
-      (p) => typeof p === "number",
-    ) as number[]
+    if (primitives[0] !== undefined) rect._layer = String(primitives[0])
+
+    const numbers = primitives
+      .slice(1)
+      .filter((p) => typeof p === "number") as number[]
     if (numbers.length >= 4) {
       rect._x1 = numbers[0]
       rect._y1 = numbers[1]

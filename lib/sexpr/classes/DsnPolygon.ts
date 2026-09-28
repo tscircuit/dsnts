@@ -35,22 +35,20 @@ export class DsnPolygon extends SxClass {
   ): DsnPolygon {
     const polygon = new DsnPolygon()
 
-    // Parse layer (first string)
-    const layerIndex = primitiveSexprs.findIndex((p) => typeof p === "string")
-    if (layerIndex >= 0) {
-      polygon._layer = primitiveSexprs[layerIndex] as string
-    }
+    // Parse positionally - the layer name can be a number or string
+    const primitives = primitiveSexprs.filter(
+      (p) => typeof p === "string" || typeof p === "number",
+    ) as (string | number)[]
 
-    // Parse aperture width (first number)
-    const widthIndex = primitiveSexprs.findIndex((p) => typeof p === "number")
-    if (widthIndex >= 0) {
-      polygon._apertureWidth = primitiveSexprs[widthIndex] as number
+    if (primitives[0] !== undefined) polygon._layer = String(primitives[0])
+    if (typeof primitives[1] === "number") {
+      polygon._apertureWidth = primitives[1]
     }
 
     // Remaining numbers are coordinates
-    for (let i = widthIndex + 1; i < primitiveSexprs.length; i++) {
-      if (typeof primitiveSexprs[i] === "number") {
-        polygon._coordinates.push(primitiveSexprs[i] as number)
+    for (const prim of primitives.slice(2)) {
+      if (typeof prim === "number") {
+        polygon._coordinates.push(prim)
       }
     }
 
