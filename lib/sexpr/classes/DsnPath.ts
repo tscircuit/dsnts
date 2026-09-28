@@ -34,22 +34,18 @@ export class DsnPath extends SxClass {
   ): DsnPath {
     const path = new DsnPath()
 
-    // Parse layer (first string)
-    const layerIndex = primitiveSexprs.findIndex((p) => typeof p === "string")
-    if (layerIndex >= 0) {
-      path._layer = primitiveSexprs[layerIndex] as string
-    }
+    // Parse positionally - the layer name can be a number or string
+    const primitives = primitiveSexprs.filter(
+      (p) => typeof p === "string" || typeof p === "number",
+    ) as (string | number)[]
 
-    // Parse width (first number)
-    const widthIndex = primitiveSexprs.findIndex((p) => typeof p === "number")
-    if (widthIndex >= 0) {
-      path._width = primitiveSexprs[widthIndex] as number
-    }
+    if (primitives[0] !== undefined) path._layer = String(primitives[0])
+    if (typeof primitives[1] === "number") path._width = primitives[1]
 
     // Remaining numbers are coordinates
-    for (let i = widthIndex + 1; i < primitiveSexprs.length; i++) {
-      if (typeof primitiveSexprs[i] === "number") {
-        path._coordinates.push(primitiveSexprs[i] as number)
+    for (const prim of primitives.slice(2)) {
+      if (typeof prim === "number") {
+        path._coordinates.push(prim)
       }
     }
 
