@@ -35,10 +35,10 @@ export class DsnLayer extends SxClass {
   ): DsnLayer {
     const layer = new DsnLayer()
 
-    // First string is the layer name
+    // Layer names may be numeric atoms, as in (layer 1 (type signal)).
     for (const primitive of primitiveSexprs) {
-      if (typeof primitive === "string") {
-        layer._layerName = primitive
+      if (typeof primitive === "string" || typeof primitive === "number") {
+        layer._layerName = String(primitive)
         break
       }
     }
