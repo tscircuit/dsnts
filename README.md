@@ -66,7 +66,13 @@ const dsn = new SpectraDsn({
   structure: new Structure({
     boundary: new Boundary({
       // Board outline
-      path: [[0, 0], [100, 0], [100, 80], [0, 80], [0, 0]],
+      path: [
+        [0, 0],
+        [100, 0],
+        [100, 80],
+        [0, 80],
+        [0, 0],
+      ],
     }),
   }),
   network: new Network({

@@ -63,8 +63,8 @@ export class SpectraSes extends SxClass {
       ses._sessionName = primitiveSexprs[0]
     }
 
-    // Parse remaining children
-    for (let i = 1; i < primitiveSexprs.length; i++) {
+    // Parse children; a leading string name is skipped by the array check
+    for (let i = 0; i < primitiveSexprs.length; i++) {
       const primitive = primitiveSexprs[i]
 
       if (!Array.isArray(primitive) || primitive.length === 0) {

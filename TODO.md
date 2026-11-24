@@ -5,6 +5,7 @@ This document outlines the plan to adapt the current kicadts repository to parse
 ## Architecture Overview
 
 The current architecture uses:
+
 - **S-expression base classes** (`SxClass`, primitive types) - ✅ Can be reused as-is
 - **Token-based class system** - Each DSN element is modeled as a class with a token
 - **Parsing infrastructure** - `parseToPrimitiveSExpr` and class registration system
@@ -14,6 +15,7 @@ The current architecture uses:
 ## Phase 1: Repository Rebranding & Setup
 
 ### 1.1 Package Configuration
+
 - [x] Update `package.json`:
   - [x] Change `name` from `"kicadts"` to `"dsnts"`
   - [x] Update repository URL to new repo location
@@ -27,6 +29,7 @@ The current architecture uses:
   - [ ] Add links to Specctra specification documents
 
 ### 1.2 Build & Development Scripts
+
 - [ ] Update `scripts/download-references.ts`:
   - [ ] Remove KiCad demo download logic
   - [ ] Add logic to download sample DSN files (from FreeRouting examples, etc.)
@@ -37,6 +40,7 @@ The current architecture uses:
 ## Phase 2: Core Architecture - Root Classes
 
 ### 2.1 Main DSN File Class
+
 - [x] Create `SpectraDsn` class (replaces `KicadPcb`):
   - [x] Token: `"pcb"` (DSN files start with `(pcb ...)`)
   - [x] Properties: parser, resolution, unit, structure, placement, library, network, wiring, etc.
@@ -44,12 +48,14 @@ The current architecture uses:
   - [x] Location: `lib/sexpr/classes/SpectraDsn.ts`
 
 ### 2.2 Session (SES) File Class
+
 - [x] Create `SpectraSes` class (for session files):
   - [x] Token: `"session"` (SES files start with `(session ...)`)
   - [x] Properties: base_design, placement, was_is, routes, etc.
   - [x] Location: `lib/sexpr/classes/SpectraSes.ts`
 
 ### 2.3 Remove KiCad-Specific Root Classes
+
 - [x] Delete or deprecate:
   - [x] `KicadSch.ts` (DSN doesn't have schematics)
   - [x] `KicadPcb.ts` (replaced by SpectraDsn)
@@ -58,6 +64,7 @@ The current architecture uses:
 ## Phase 3: DSN Structure Classes
 
 ### 3.1 Top-Level DSN Components
+
 - [x] Create `Parser` class - `(parser ...)` → DsnParser
 - [x] Create `Resolution` class - `(resolution ...)` → DsnResolution
 - [x] Create `Unit` class - `(unit ...)` → DsnUnit
@@ -82,6 +89,7 @@ The current architecture uses:
   - [x] Child: `WireVia` - `(via ...)`
 
 ### 3.2 Geometry & Design Rule Classes
+
 - [x] Create `Rule` class hierarchy:
   - [x] `WidthRule` - `(width ...)`
   - [x] `ClearanceRule` - `(clearance ...)`
@@ -94,6 +102,7 @@ The current architecture uses:
   - [x] Reuse `At`, `Xy`, `Pts` with modifications
 
 ### 3.3 Layer System
+
 - [x] Create DSN-specific layer classes:
   - [x] `DsnLayer` class - `(layer ...)` (different structure than KiCad)
   - [ ] `LayerPair` - `(layer_pair ...)`
@@ -104,6 +113,7 @@ The current architecture uses:
 ## Phase 4: Component & Footprint Classes
 
 ### 4.1 DSN Component System
+
 - [x] Create `DsnComponent` class - `(component ...)`
   - [x] Properties: image reference, placement info
   - [x] Different from KiCad `Footprint` structure
@@ -115,6 +125,7 @@ The current architecture uses:
   - [x] More complex than KiCad pad definitions
 
 ### 4.2 Remove KiCad Footprint Classes
+
 - [x] Delete/archive these KiCad-specific classes:
   - [x] `Footprint.ts` and all `Footprint*` classes (~25 files)
   - [x] `FootprintPad.ts` and all `Pad*` classes (~25 files)
@@ -123,6 +134,7 @@ The current architecture uses:
 ## Phase 5: Nets & Routing Classes
 
 ### 5.1 Network System
+
 - [x] Create `DsnNet` class - `(net ...)` in network section
   - [x] Different structure than KiCad `PcbNet`
   - [x] Contains pins, class assignments
@@ -132,6 +144,7 @@ The current architecture uses:
   - [x] References component pins in nets
 
 ### 5.2 Wiring & Routing
+
 - [x] Create `DsnWire` class - `(wire ...)`
   - [x] Different from schematic `Wire`
   - [x] Contains routing information
@@ -141,6 +154,7 @@ The current architecture uses:
   - [x] Simpler than KiCad via structure
 
 ### 5.3 Remove KiCad Routing Classes
+
 - [x] Delete/archive:
   - [x] `Segment.ts`, `SegmentStart.ts`, `SegmentEnd.ts`, etc.
   - [x] `Zone.ts` (no zone concept in DSN)
@@ -149,6 +163,7 @@ The current architecture uses:
 ## Phase 6: Graphics & Design Elements
 
 ### 6.1 DSN Graphics
+
 - [x] Create boundary/outline classes:
   - [x] `Outline` - `(outline ...)` → DsnOutline
   - [ ] `Window` - `(window ...)` (cutouts)
@@ -157,6 +172,7 @@ The current architecture uses:
   - [x] Reuse some existing shape classes with modifications (DsnShape, DsnPath, DsnRect)
 
 ### 6.2 Remove KiCad Graphics
+
 - [x] Delete/archive:
   - [x] `GrLine.ts`, `GrText.ts` and related classes
   - [x] KiCad-specific drawing primitives
@@ -164,6 +180,7 @@ The current architecture uses:
 ## Phase 7: Common/Reusable Classes
 
 ### 7.1 Keep & Adapt
+
 - [ ] Review and keep these (with possible modifications):
   - [ ] `At.ts` - Position/rotation (may need DSN-specific format)
   - [ ] `Xy.ts` - Coordinate pairs
@@ -173,6 +190,7 @@ The current architecture uses:
   - [ ] `Layer.ts` - May need modification for DSN layer format
 
 ### 7.2 Remove KiCad-Specific
+
 - [x] Delete/archive:
   - [x] `Paper.ts`, `TitleBlock.ts` (schematic-specific)
   - [x] `Property.ts`, `PropertyUnlocked.ts`, `PropertyHide.ts` (KiCad-specific)
@@ -187,6 +205,7 @@ The current architecture uses:
 ## Phase 8: Parsing Infrastructure
 
 ### 8.1 Update Parse Functions
+
 - [ ] Update `parseKicadSexpr.ts` → `parseSpectraSexpr.ts`:
   - [ ] Rename `parseKicadSexpr` → `parseSpectraSexpr`
   - [ ] Create `parseSpectraDsn` (returns `SpectraDsn`)
@@ -194,6 +213,7 @@ The current architecture uses:
   - [ ] Remove `parseKicadSch`, `parseKicadPcb`, `parseKicadMod`
 
 ### 8.2 Keep Core Parsing
+
 - [ ] Keep `parseToPrimitiveSExpr.ts` as-is (handles S-expression parsing)
 - [ ] Keep `SxClass.ts` base class system
 - [ ] Keep primitive classes (`SxPrimitiveBoolean`, `SxPrimitiveNumber`, `SxPrimitiveString`)
@@ -201,6 +221,7 @@ The current architecture uses:
 ## Phase 9: Update Exports
 
 ### 9.1 Main Index
+
 - [ ] Update `lib/index.ts`:
   - [ ] Export only `sexpr` (same pattern)
 - [ ] Update `lib/sexpr/index.ts`:
@@ -212,12 +233,14 @@ The current architecture uses:
 ## Phase 10: Testing Infrastructure
 
 ### 10.1 Update Test Fixtures
+
 - [ ] Update `tests/fixtures/`:
   - [ ] Keep `expectEqualPrimitiveSExpr.ts` (works for any S-expression)
   - [ ] Review `png-matcher.ts` (may not be needed for DSN)
   - [ ] Keep `preload.ts`
 
 ### 10.2 Create DSN Tests
+
 - [x] Create `tests/sexpr/SpectraDsnDemos.test.ts`:
   - [x] Download sample DSN files
   - [x] Test round-trip parsing (parse → stringify → parse)
@@ -234,6 +257,7 @@ The current architecture uses:
   - [ ] `tests/sexpr/classes/Wiring.test.ts`
 
 ### 10.3 Remove KiCad Tests
+
 - [x] Delete:
   - [x] `KicadSchDemos.test.ts`
   - [x] `KicadPcbDemos.test.ts`
@@ -242,6 +266,7 @@ The current architecture uses:
 ## Phase 11: Documentation & Examples
 
 ### 11.1 Update README Examples
+
 - [ ] Create example: "Parse Existing DSN File"
 - [ ] Create example: "Build DSN File Programmatically"
 - [ ] Create example: "Extract Network Information"
@@ -249,6 +274,7 @@ The current architecture uses:
 - [ ] Create example: "Parse SES Session File"
 
 ### 11.2 API Documentation
+
 - [ ] Document main classes:
   - [ ] `SpectraDsn` - Root DSN file class
   - [ ] `SpectraSes` - Session file class
@@ -265,11 +291,13 @@ The current architecture uses:
 ## Phase 12: TypeScript & Build Configuration
 
 ### 12.1 Type Definitions
+
 - [ ] Review and update type exports
 - [ ] Ensure all new DSN classes have proper types
 - [ ] Update constructor parameter interfaces
 
 ### 12.2 Build Verification
+
 - [ ] Run `bun run typecheck` - ensure no errors
 - [ ] Run `bun run build` - ensure clean build
 - [ ] Run `bun test` - all new tests pass
@@ -278,6 +306,7 @@ The current architecture uses:
 ## Phase 13: Reference Implementation Research
 
 ### 13.1 Study DSN Format
+
 - [ ] Download and study Specctra DSN specification PDF
 - [ ] Analyze sample DSN files from:
   - [ ] FreeRouting examples
@@ -287,6 +316,7 @@ The current architecture uses:
 - [ ] Create reference samples in `tests/fixtures/dsn-samples/`
 
 ### 13.2 Identify All DSN Tokens
+
 - [ ] Create comprehensive list of DSN tokens/keywords
 - [ ] Map tokens to class implementations needed
 - [ ] Prioritize commonly-used tokens vs. rare ones
@@ -294,6 +324,7 @@ The current architecture uses:
 ## Phase 14: Migration Cleanup
 
 ### 14.1 File Organization
+
 - [ ] Move deprecated KiCad classes to `lib/sexpr/classes/_deprecated/` (if keeping for reference)
   - Or delete entirely if not needed
 - [ ] Organize DSN classes by category:
@@ -304,6 +335,7 @@ The current architecture uses:
   - [ ] `lib/sexpr/classes/rules/`
 
 ### 14.2 Final Verification
+
 - [ ] All imports updated (no broken references)
 - [ ] All tests passing
 - [ ] Build succeeds
@@ -317,6 +349,7 @@ The current architecture uses:
 ### Code Patterns to Maintain
 
 1. **Class Structure Pattern**:
+
    ```typescript
    export class DsnElement extends SxClass {
      static override token = "element_name"
@@ -349,6 +382,7 @@ The current architecture uses:
    ```
 
 2. **Test Pattern**:
+
    ```typescript
    test("round-trip DSN file", async () => {
      const original = await Bun.file("sample.dsn").text()

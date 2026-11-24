@@ -45,6 +45,15 @@ describe("SpectraDsn", () => {
     expect(parsed.designName).toBeUndefined()
   })
 
+  test("does not drop the first child section when there is no design name", () => {
+    const input = `(pcb (parser "Specctra_DSN") (unit mil))`
+
+    const parsed = parseSpectraDsn(input)
+    expect(parsed.designName).toBeUndefined()
+    expect(parsed.parser).toBe("Specctra_DSN")
+    expect(parsed.unit).toBe("mil")
+  })
+
   test("throws error when parsing non-DSN file", () => {
     const input = `(session "test")`
 

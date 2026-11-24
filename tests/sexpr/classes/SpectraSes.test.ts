@@ -54,6 +54,16 @@ describe("SpectraSes", () => {
     expect(parsed.sessionName).toBeUndefined()
   })
 
+  test("does not drop the first child section when there is no session name", () => {
+    const input = `(session (base_design "board.dsn") (routes (resolution mil 1000)))`
+
+    const parsed = parseSpectraSes(input)
+    expect(parsed.sessionName).toBeUndefined()
+    expect(parsed.baseDesign?.designName).toBe("board.dsn")
+    expect(parsed.routes?.resolution?.unit).toBe("mil")
+    expect(parsed.routes?.resolution?.value).toBe(1000)
+  })
+
   test("throws error when parsing non-SES file", () => {
     const input = `(pcb "test")`
 
